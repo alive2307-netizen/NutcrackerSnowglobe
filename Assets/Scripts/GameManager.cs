@@ -85,6 +85,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void ReturnToMenu()
+    {
+        startAfterReload = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     private void Finish(GameState result, string reason)
     {
         if (State != GameState.Running)
