@@ -16,13 +16,14 @@ public class ObjectBob : MonoBehaviour
     private float phase;
     private float spin;
     private Renderer[] glowRenderers;
-    private readonly MaterialPropertyBlock block = new MaterialPropertyBlock();
+    private MaterialPropertyBlock block;
 
     private void Start()
     {
         restPosition = visual.localPosition;
         restRotation = visual.localRotation;
         glowRenderers = visual.GetComponentsInChildren<Renderer>();
+        block = new MaterialPropertyBlock();
     }
 
     private void Update()

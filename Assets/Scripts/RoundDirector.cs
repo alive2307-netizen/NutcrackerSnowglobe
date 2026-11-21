@@ -76,6 +76,7 @@ public class RoundDirector : MonoBehaviour
         go.transform.localPosition = new Vector3(0f, 2.5f, 9f);
 
         confetti = go.AddComponent<ParticleSystem>();
+        confetti.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         ParticleSystem.MainModule main = confetti.main;
         main.playOnAwake = false;

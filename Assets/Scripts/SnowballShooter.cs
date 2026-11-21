@@ -52,10 +52,10 @@ public class SnowballShooter : MonoBehaviour
 
         Vector3 up = planetGravity.Up;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, up).normalized;
-        Vector3 spawn = transform.position + up * 1f + forward * 1.2f;
+        Vector3 spawn = transform.position + forward * 1.2f;
 
         AudioManager.Play(AudioManager.Sfx.Shot);
         GameObject snowball = Instantiate(snowballPrefab, spawn, Quaternion.LookRotation(forward, up));
-        snowball.GetComponent<Rigidbody>().linearVelocity = forward * speed;
+        snowball.GetComponent<SnowballProjectile>().Launch(planetGravity.planet, forward * speed);
     }
 }
