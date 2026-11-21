@@ -44,6 +44,6 @@ public class RoundUI : MonoBehaviour
         }
 
         timerText.text = "Время: " + Mathf.CeilToInt(game.TimeLeft) + " с";
-        healthText.text = "Здоровье: " + Mathf.CeilToInt(health.CurrentHealth);
+        healthText.text = "Ёлка: " + Mathf.CeilToInt(health.CurrentHealth) + " / " + Mathf.CeilToInt(health.maxHealth);
     }
 }

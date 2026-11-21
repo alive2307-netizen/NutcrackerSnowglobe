@@ -2,44 +2,51 @@ using UnityEngine;
 
 public class HealthManager : MonoBehaviour
 {
-    [Tooltip("Стартовое и максимальное здоровье.")]
+    [Tooltip("Сколько единиц нужно набрать, чтобы шкала Ёлки-2 заполнилась и раунд был выигран.")]
     public float maxHealth = 100f;
 
     public float CurrentHealth { get; private set; }
+    public bool IsInvincible => Time.time < invincibleUntil;
+
+    private float invincibleUntil;
 
     private void Awake()
     {
-        CurrentHealth = maxHealth;
+        CurrentHealth = 0f;
     }
 
-    public void TakeDamage(float amount)
+    public void Collect(float amount)
     {
-        if (amount <= 0f || CurrentHealth <= 0f)
-        {
-            return;
-        }
-
-        if (GameManager.Instance != null && GameManager.Instance.State != GameState.Running)
-        {
-            return;
-        }
-
-        CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
-        Debug.Log("[Щелкунчик] Получен урон " + amount + ", здоровье: " + CurrentHealth);
-
-        if (CurrentHealth <= 0f && GameManager.Instance != null)
-        {
-            GameManager.Instance.GameOver("Здоровье закончилось");
-        }
-    }
-
-    public void Heal(float amount)
-    {
-        if (amount <= 0f)
+        if (amount <= 0f || !IsRunning())
         {
             return;
         }
 
         CurrentHealth = Mathf.Min(maxHealth, CurrentHealth + amount);
+
+        if (CurrentHealth >= maxHealth && GameManager.Instance != null)
+        {
+            GameManager.Instance.Win("Ёлка полностью украшена");
+        }
+    }
+
+    public void TakeDamage(float amount)
+    {
+        if (amount <= 0f || IsInvincible || !IsRunning())
+        {
+            return;
+        }
+
+        CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
+    }
+
+    public void MakeInvincible(float duration)
+    {
+        invincibleUntil = Mathf.Max(invincibleUntil, Time.time + duration);
+    }
+
+    private static bool IsRunning()
+    {
+        return GameManager.Instance == null || GameManager.Instance.State == GameState.Running;
     }
 }

@@ -63,6 +63,11 @@ public class GameManager : MonoBehaviour
         Finish(GameState.Lose, reason);
     }
 
+    public void Win(string reason)
+    {
+        Finish(GameState.Win, reason);
+    }
+
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
