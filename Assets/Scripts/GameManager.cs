@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Синглтон состояния игры. На этапе 4 умеет только одно: обработать гибель игрока
-/// (остановить бег, написать в консоль, перезагрузить сцену). Здоровье и экраны
-/// победы и поражения добавляются на следующих этапах.
-/// </summary>
+public enum GameState
+{
+    Menu,
+    Running,
+    Win,
+    Lose
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -12,39 +16,77 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     public PlayerMovement player;
 
-    [Header("Game Over")]
-    [Tooltip("Пауза перед перезагрузкой сцены, секунд.")]
-    public float restartDelay = 1.5f;
+    [Header("Round")]
+    [Tooltip("Сколько секунд нужно продержаться до победы. Временное правило до этапа 10 (звезда на ёлке).")]
+    public float roundDuration = 60f;
 
-    public bool IsGameOver { get; private set; }
+    public GameState State { get; private set; } = GameState.Menu;
+    public float TimeLeft { get; private set; }
+    public string ResultReason { get; private set; } = "";
 
     private void Awake()
     {
         Instance = this;
         Time.timeScale = 1f;
+        SetState(GameState.Menu);
     }
 
-    public void GameOver(string reason)
+    private void Update()
     {
-        if (IsGameOver)
+        if (State != GameState.Running)
         {
             return;
         }
 
-        IsGameOver = true;
-        Debug.Log("Игра окончена: " + reason + ". Перезапуск через " + restartDelay + " с");
+        TimeLeft -= Time.deltaTime;
+
+        if (TimeLeft <= 0f)
+        {
+            Finish(GameState.Win, "Вы продержались весь раунд");
+        }
+    }
+
+    public void StartRound()
+    {
+        if (State == GameState.Running)
+        {
+            return;
+        }
+
+        TimeLeft = roundDuration;
+        ResultReason = "";
+        SetState(GameState.Running);
+    }
+
+    public void GameOver(string reason)
+    {
+        Finish(GameState.Lose, reason);
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void Finish(GameState result, string reason)
+    {
+        if (State != GameState.Running)
+        {
+            return;
+        }
+
+        ResultReason = reason;
+        SetState(result);
+        Debug.Log("[Щелкунчик] Раунд окончен: " + result + ". " + reason);
+    }
+
+    private void SetState(GameState state)
+    {
+        State = state;
 
         if (player != null)
         {
-            player.canMove = false;
+            player.canMove = state == GameState.Running;
         }
-
-        Invoke(nameof(RestartScene), restartDelay);
-    }
-
-    private void RestartScene()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
 }
