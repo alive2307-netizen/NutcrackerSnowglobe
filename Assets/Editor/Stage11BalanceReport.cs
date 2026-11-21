@@ -19,26 +19,18 @@ public static class Stage11BalanceReport
             return;
         }
 
-        float radius = 30f;
-        float circumference = 2f * Mathf.PI * radius;
-
-        int trees = CountNamed("Tree");
-        int drifts = CountNamed("Snowdrift");
-        int ice = CountNamed("IcePatch");
-        int toys = CountNamed("Toy");
-        int tinsel = CountNamed("Tinsel");
-        int garlands = CountNamed("Garland");
-        int snowballs = CountNamed("SnowballPickup");
-        int mice = Object.FindObjectsOfType<MouseEnemy>().Length;
+        float circumference = 2f * Mathf.PI * 30f;
 
         string report =
             "[Баланс]\n" +
             "Длина большого круга трассы: " + circumference.ToString("0") + " м\n" +
-            "Скорость: мин " + player.minSpeed + ", база " + player.baseSpeed + ", макс " + player.maxSpeed + " м/с\n" +
+            "Скорость: база " + player.baseSpeed + ", макс " + player.maxBoostedSpeed + " м/с\n" +
             "Круг при базовой скорости: " + (circumference / player.baseSpeed).ToString("0") + " с\n" +
-            "Ёлки: " + trees + ", сугробы: " + drifts + ", лёд: " + ice + "\n" +
-            "Игрушки: " + toys + ", мишура: " + tinsel + ", гирлянды: " + garlands +
-            ", снежки: " + snowballs + ", мыши: " + mice;
+            "Ёлки: " + CountNamed("Tree") + ", сугробы: " + CountNamed("Snowdrift") +
+            ", лёд: " + CountNamed("IcePatch") + "\n" +
+            "Игрушки: " + CountNamed("Toy") + ", мишура: " + CountNamed("Tinsel") +
+            ", гирлянды: " + CountNamed("Garland") + ", снежки: " + CountNamed("SnowballPickup") +
+            ", мыши: " + Object.FindObjectsOfType<MouseEnemy>().Length;
 
         Debug.Log(report);
     }

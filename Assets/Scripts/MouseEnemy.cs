@@ -11,31 +11,32 @@ public class MouseEnemy : MonoBehaviour
     [Tooltip("Высота мыши над поверхностью, м.")]
     public float surfaceLift = 0.5f;
 
-    [Tooltip("Ось большого круга, по которому бегает мышь. Должна совпадать с трассой игрока.")]
+    [Tooltip("Ось патрулирования: мышь бегает по большому кругу вокруг неё.")]
     public Vector3 orbitAxis = Vector3.right;
 
-    [Tooltip("Скорость по кругу, градусов в секунду.")]
+    [Tooltip("Скорость патрулирования, градусов в секунду.")]
     public float orbitSpeed = 20f;
 
-    [Tooltip("Стартовый угол на круге, градусов.")]
+    [Tooltip("Стартовый угол патрулирования, градусов.")]
     public float startAngle;
 
-    private float angle;
+    [Tooltip("Радиус обнаружения, градусов по поверхности шара. Внутри него мышь начинает погоню.")]
+    public float detectAngle = 25f;
+
+    [Tooltip("Если игрок отъехал дальше этого угла, погоня прекращается.")]
+    public float loseAngle = 45f;
+
+    [Tooltip("Скорость погони, градусов в секунду. Чуть выше базовой скорости игрока.")]
+    public float chaseSpeed = 21f;
+
+    [Tooltip("Сколько единиц шкалы Ёлки-2 крадёт мышь (одна игрушка).")]
+    public float stealAmount = 10f;
+
+    private Vector3 surfaceDir;
+    private bool chasing;
 
     private void Start()
     {
-        angle = startAngle;
-    }
-
-    private void Update()
-    {
-        if (GameManager.Instance != null && GameManager.Instance.State != GameState.Running)
-        {
-            return;
-        }
-
-        angle += orbitSpeed * Time.deltaTime;
-
         Vector3 axis = orbitAxis.normalized;
         Vector3 a = Vector3.Cross(axis, Vector3.up);
 
@@ -47,12 +48,69 @@ public class MouseEnemy : MonoBehaviour
         a.Normalize();
         Vector3 b = Vector3.Cross(axis, a);
 
-        float rad = angle * Mathf.Deg2Rad;
-        Vector3 normal = (a * Mathf.Cos(rad) + b * Mathf.Sin(rad)).normalized;
-        Vector3 velocity = -a * Mathf.Sin(rad) + b * Mathf.Cos(rad);
+        float rad = startAngle * Mathf.Deg2Rad;
+        surfaceDir = (a * Mathf.Cos(rad) + b * Mathf.Sin(rad)).normalized;
+    }
 
-        transform.position = planet.position + normal * (planetRadius + surfaceLift);
-        transform.rotation = Quaternion.LookRotation(velocity, normal);
+    private void Update()
+    {
+        bool running = GameManager.Instance == null || GameManager.Instance.State == GameState.Running;
+        float dt = running ? Time.deltaTime : 0f;
+        Vector3 center = planet.position;
+
+        Vector3 motion;
+
+        if (running && GameManager.Instance.player != null)
+        {
+            Vector3 playerDir = (GameManager.Instance.player.transform.position - center).normalized;
+            float toPlayer = Vector3.Angle(surfaceDir, playerDir);
+
+            if (!chasing && toPlayer <= detectAngle)
+            {
+                chasing = true;
+            }
+            else if (chasing && toPlayer > loseAngle)
+            {
+                chasing = false;
+            }
+        }
+        else
+        {
+            chasing = false;
+        }
+
+        if (chasing)
+        {
+            Vector3 playerDir = (GameManager.Instance.player.transform.position - center).normalized;
+            Vector3 rotAxis = Vector3.Cross(surfaceDir, playerDir);
+            float angle = Vector3.Angle(surfaceDir, playerDir);
+
+            if (rotAxis.sqrMagnitude < 0.000001f || angle < 0.01f)
+            {
+                motion = Vector3.zero;
+            }
+            else
+            {
+                rotAxis.Normalize();
+                float step = Mathf.Min(chaseSpeed * dt, angle);
+                surfaceDir = Quaternion.AngleAxis(step, rotAxis) * surfaceDir;
+                motion = Vector3.Cross(rotAxis, surfaceDir);
+            }
+        }
+        else
+        {
+            Vector3 axis = orbitAxis.normalized;
+            surfaceDir = Quaternion.AngleAxis(orbitSpeed * dt, axis) * surfaceDir;
+            motion = Vector3.Cross(axis, surfaceDir);
+        }
+
+        surfaceDir.Normalize();
+        transform.position = center + surfaceDir * (planetRadius + surfaceLift);
+
+        if (motion.sqrMagnitude > 0.000001f)
+        {
+            transform.rotation = Quaternion.LookRotation(motion.normalized, surfaceDir);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -76,7 +134,7 @@ public class MouseEnemy : MonoBehaviour
 
         HealthManager health = player.GetComponent<HealthManager>();
 
-        if (health == null || !health.LoseAllToys())
+        if (health == null || !health.Steal(stealAmount))
         {
             return;
         }

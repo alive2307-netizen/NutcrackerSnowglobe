@@ -30,21 +30,29 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    // Возвращает true, если мышь забрала игрушки: тогда она исчезает.
-    public bool LoseAllToys()
+    // Возвращает false, если украсть нельзя (гирлянда или раунд не идёт): мышь тогда проходит мимо.
+    public bool Steal(float amount)
     {
-        if (CurrentHealth <= 0f || IsInvincible || !IsRunning())
+        if (amount <= 0f || IsInvincible || !IsRunning())
         {
             return false;
         }
 
-        CurrentHealth = 0f;
+        float left = CurrentHealth - amount;
 
-        if (GameManager.Instance != null)
+        if (left < 0f)
         {
-            GameManager.Instance.GameOver("Мыши забрали все игрушки");
+            CurrentHealth = 0f;
+
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.GameOver("Мыши украли больше игрушек, чем вы собрали");
+            }
+
+            return true;
         }
 
+        CurrentHealth = left;
         return true;
     }
 
