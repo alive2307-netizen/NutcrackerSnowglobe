@@ -113,6 +113,28 @@ public class MouseEnemy : MonoBehaviour
         }
     }
 
+    public void Vanish()
+    {
+        gameObject.SetActive(false);
+        MouseRespawner.Instance.Schedule(this);
+    }
+
+    public void Respawn(Vector3 playerDirection)
+    {
+        Vector3 axis = orbitAxis.normalized;
+        Vector3 onOrbit = Vector3.ProjectOnPlane(-playerDirection, axis);
+
+        if (onOrbit.sqrMagnitude < 0.01f)
+        {
+            onOrbit = Vector3.ProjectOnPlane(Vector3.forward, axis);
+        }
+
+        surfaceDir = onOrbit.normalized;
+        chasing = false;
+        transform.position = planet.position + surfaceDir * (planetRadius + surfaceLift);
+        gameObject.SetActive(true);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         SnowballProjectile projectile = other.GetComponent<SnowballProjectile>();
@@ -121,7 +143,7 @@ public class MouseEnemy : MonoBehaviour
         {
             Destroy(projectile.gameObject);
             AudioManager.Play(AudioManager.Sfx.Splat);
-            Destroy(gameObject);
+            Vanish();
             return;
         }
 
@@ -140,6 +162,6 @@ public class MouseEnemy : MonoBehaviour
         }
 
         AudioManager.Play(AudioManager.Sfx.Bite);
-        Destroy(gameObject);
+        Vanish();
     }
 }

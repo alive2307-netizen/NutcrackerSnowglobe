@@ -49,10 +49,13 @@ public class RoundDirector : MonoBehaviour
                 miceRoot.gameObject.SetActive(false);
                 break;
 
-            case GameState.Running:
+            case GameState.Countdown:
                 AudioManager.Play(AudioManager.Sfx.Click);
                 AudioManager.PlayMusic(AudioManager.MusicTrack.Round);
                 miceRoot.gameObject.SetActive(false);
+                break;
+
+            case GameState.Running:
                 break;
 
             case GameState.Win:

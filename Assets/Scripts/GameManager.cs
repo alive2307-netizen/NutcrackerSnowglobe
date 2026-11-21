@@ -4,13 +4,18 @@ using UnityEngine.SceneManagement;
 public enum GameState
 {
     Menu,
+    Countdown,
     Running,
+    Defeat,
     Win,
     Lose
 }
 
 public class GameManager : MonoBehaviour
 {
+    private const float CountdownSeconds = 3f;
+    private const float DefeatPauseSeconds = 3f;
+
     public static GameManager Instance { get; private set; }
 
     private static bool startAfterReload;
@@ -23,9 +28,11 @@ public class GameManager : MonoBehaviour
 
     public int Score { get; private set; }
     public bool IsScoreMultiplied => Time.time < scoreMultiplierUntil;
+    public int CountdownValue => Mathf.Max(1, Mathf.CeilToInt(stateEndsAt - Time.time));
 
     private float scoreMultiplier = 1f;
     private float scoreMultiplierUntil;
+    private float stateEndsAt;
 
     private void Awake()
     {
@@ -40,9 +47,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (State == GameState.Countdown && Time.time >= stateEndsAt)
+        {
+            SetState(GameState.Running);
+        }
+        else if (State == GameState.Defeat && Time.time >= stateEndsAt)
+        {
+            SetState(GameState.Lose);
+            Debug.Log("[Щелкунчик] Раунд окончен: Lose. " + ResultReason);
+        }
+    }
+
     public void StartRound()
     {
-        if (State == GameState.Running)
+        if (State != GameState.Menu)
         {
             return;
         }
@@ -50,17 +70,32 @@ public class GameManager : MonoBehaviour
         ResultReason = "";
         Score = 0;
         scoreMultiplierUntil = 0f;
-        SetState(GameState.Running);
+        stateEndsAt = Time.time + CountdownSeconds;
+        SetState(GameState.Countdown);
     }
 
     public void GameOver(string reason)
     {
-        Finish(GameState.Lose, reason);
+        if (State != GameState.Running)
+        {
+            return;
+        }
+
+        ResultReason = reason;
+        stateEndsAt = Time.time + DefeatPauseSeconds;
+        SetState(GameState.Defeat);
     }
 
     public void Win(string reason)
     {
-        Finish(GameState.Win, reason);
+        if (State != GameState.Running)
+        {
+            return;
+        }
+
+        ResultReason = reason;
+        SetState(GameState.Win);
+        Debug.Log("[Щелкунчик] Раунд окончен: Win. " + reason);
     }
 
     public void AddScore(int basePoints)
@@ -89,20 +124,6 @@ public class GameManager : MonoBehaviour
     {
         startAfterReload = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    private void Finish(GameState result, string reason)
-    {
-        if (State != GameState.Running)
-        {
-            return;
-        }
-
-        ResultReason = reason;
-        SetState(result);
-        AudioManager.SetSkating(false);
-        AudioManager.Play(result == GameState.Win ? AudioManager.Sfx.Win : AudioManager.Sfx.Lose);
-        Debug.Log("[Щелкунчик] Раунд окончен: " + result + ". " + reason);
     }
 
     private void SetState(GameState state)

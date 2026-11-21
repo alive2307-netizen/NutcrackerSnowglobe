@@ -12,7 +12,10 @@ public class AudioManager : MonoBehaviour
         Win,
         Lose,
         Bite,
-        SnowHit
+        SnowHit,
+        ToyPickup,
+        TinselPickup,
+        GarlandPickup
     }
 
     public enum MusicTrack
@@ -47,6 +50,9 @@ public class AudioManager : MonoBehaviour
     public AudioClip loseSound;
     public AudioClip biteSound;
     public AudioClip snowHitSound;
+    public AudioClip toyPickupSound;
+    public AudioClip tinselPickupSound;
+    public AudioClip garlandPickupSound;
 
     [Header("Looping")]
     public AudioClip skateClip;
@@ -160,6 +166,9 @@ public class AudioManager : MonoBehaviour
             case Sfx.Win: return winSound;
             case Sfx.Bite: return biteSound;
             case Sfx.SnowHit: return snowHitSound;
+            case Sfx.ToyPickup: return toyPickupSound;
+            case Sfx.TinselPickup: return tinselPickupSound;
+            case Sfx.GarlandPickup: return garlandPickupSound;
             default: return loseSound;
         }
     }

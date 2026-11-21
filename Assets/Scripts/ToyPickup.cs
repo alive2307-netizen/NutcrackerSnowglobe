@@ -8,6 +8,8 @@ public class ToyPickup : Collectible
     [Tooltip("Базовые очки за игрушку, до множителя мишуры.")]
     public int points = 10;
 
+    protected override AudioManager.Sfx PickupSound => AudioManager.Sfx.ToyPickup;
+
     protected override void OnCollect(PlayerMovement player)
     {
         if (GameManager.Instance != null)

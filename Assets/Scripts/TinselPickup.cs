@@ -8,6 +8,8 @@ public class TinselPickup : Collectible
     [Tooltip("Длительность удвоения очков, секунд.")]
     public float duration = 10f;
 
+    protected override AudioManager.Sfx PickupSound => AudioManager.Sfx.TinselPickup;
+
     protected override void OnCollect(PlayerMovement player)
     {
         if (GameManager.Instance != null)

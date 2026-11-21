@@ -2,6 +2,8 @@ using UnityEngine;
 
 public abstract class Collectible : MonoBehaviour
 {
+    protected virtual AudioManager.Sfx PickupSound => AudioManager.Sfx.Pickup;
+
     protected virtual void OnTriggerEnter(Collider other)
     {
         PlayerMovement player = other.GetComponentInParent<PlayerMovement>();
@@ -12,6 +14,7 @@ public abstract class Collectible : MonoBehaviour
         }
 
         OnCollect(player);
+        AudioManager.Play(PickupSound);
         Destroy(gameObject);
     }
 

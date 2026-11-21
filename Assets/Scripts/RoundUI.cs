@@ -22,6 +22,7 @@ public class RoundUI : MonoBehaviour
     public Text timerText;
     public Text healthText;
     public Text scoreText;
+    public Text countdownText;
 
     private bool optionsOpen;
 
@@ -39,6 +40,7 @@ public class RoundUI : MonoBehaviour
     {
         GameState state = game.State;
         bool menu = state == GameState.Menu;
+        bool counting = state == GameState.Countdown;
         bool finished = state == GameState.Win || state == GameState.Lose;
 
         if (!menu)
@@ -48,8 +50,15 @@ public class RoundUI : MonoBehaviour
 
         menuPanel.SetActive(menu && !optionsOpen);
         optionsPanel.SetActive(menu && optionsOpen);
-        hudPanel.SetActive(state == GameState.Running);
+        hudPanel.SetActive(state == GameState.Running || counting || state == GameState.Defeat);
         resultPanel.SetActive(finished);
+
+        countdownText.gameObject.SetActive(counting);
+
+        if (counting)
+        {
+            countdownText.text = game.CountdownValue.ToString();
+        }
 
         if (finished)
         {

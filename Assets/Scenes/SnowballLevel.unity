@@ -3681,6 +3681,7 @@ RectTransform:
   - {fileID: 266396555}
   - {fileID: 377260512}
   - {fileID: 1829098365}
+  - {fileID: 2048100143}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3716,6 +3717,7 @@ MonoBehaviour:
   timerText: {fileID: 2089137355}
   healthText: {fileID: 592596014}
   scoreText: {fileID: 252487521}
+  countdownText: {fileID: 2048100141}
 --- !u!114 &444768973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7876,6 +7878,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3899790788831896071, guid: 2564006a23b964c1ea0ecd0c24a5aacf, type: 3}
   m_PrefabInstance: {fileID: 986997169}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1003350585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1003350587}
+  - component: {fileID: 1003350586}
+  m_Layer: 0
+  m_Name: MouseRespawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1003350586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003350585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92222ceeec92f4e33b7d07556634c5f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  respawnDelay: 8
+--- !u!4 &1003350587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003350585}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1004104293
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8368,6 +8415,9 @@ MonoBehaviour:
   loseSound: {fileID: 8300000, guid: a1888d65c37034867862b11af4ba0eb1, type: 3}
   biteSound: {fileID: 8300000, guid: 4d1fca3688c5b490ea7e8c801e7b9a2b, type: 3}
   snowHitSound: {fileID: 8300000, guid: 0cd785671b0da4d3eb38d86064b0f471, type: 3}
+  toyPickupSound: {fileID: 8300000, guid: 37004f6946783447eb8ff38452e0dd60, type: 3}
+  tinselPickupSound: {fileID: 8300000, guid: e0caed70f2f354b33889e044be33ca67, type: 3}
+  garlandPickupSound: {fileID: 8300000, guid: 6b2182da6437a4138a50ea7cb8d9445b, type: 3}
   skateClip: {fileID: 8300000, guid: c6730b0db7d9447ffbf0dc0969978017, type: 3}
 --- !u!4 &1040122623
 Transform:
@@ -9229,6 +9279,7 @@ GameObject:
   - component: {fileID: 1193859513}
   - component: {fileID: 1193859514}
   - component: {fileID: 1193859515}
+  - component: {fileID: 1193859516}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -9442,6 +9493,20 @@ MonoBehaviour:
   tiltAngle: 6
   stepsPerSecond: 2.5
   blendSpeed: 4
+--- !u!114 &1193859516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193859505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b19e0beb46204036bf94099f5471cee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  height: 1.35
+  radius: 0.45
 --- !u!1001 &1218249742
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16731,6 +16796,85 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3899790788831896071, guid: 2564006a23b964c1ea0ecd0c24a5aacf, type: 3}
   m_PrefabInstance: {fileID: 2045526246}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2048100140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2048100143}
+  - component: {fileID: 2048100142}
+  - component: {fileID: 2048100141}
+  m_Layer: 0
+  m_Name: Countdown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &2048100141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048100140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.85, b: 0.4, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 200
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 
+--- !u!222 &2048100142
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048100140}
+  m_CullTransparentMesh: 1
+--- !u!224 &2048100143
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048100140}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 444768971}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 400, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &2063710275
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17732,3 +17876,4 @@ SceneRoots:
   - {fileID: 1978081244}
   - {fileID: 2035455597}
   - {fileID: 1365182265}
+  - {fileID: 1003350587}
