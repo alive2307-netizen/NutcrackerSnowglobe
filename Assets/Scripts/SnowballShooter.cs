@@ -12,12 +12,26 @@ public class SnowballShooter : MonoBehaviour
     [Tooltip("Пауза между выстрелами, секунд.")]
     public float cooldown = 0.4f;
 
+    [Tooltip("Снежков в начале раунда.")]
+    public int startAmmo = 5;
+
+    [Tooltip("Максимум снежков в запасе.")]
+    public int maxAmmo = 10;
+
+    public int Ammo { get; private set; }
+
     private float nextShotTime;
     private PlanetGravity planetGravity;
 
     private void Awake()
     {
         planetGravity = GetComponent<PlanetGravity>();
+        Ammo = startAmmo;
+    }
+
+    public void AddAmmo(int amount)
+    {
+        Ammo = Mathf.Min(maxAmmo, Ammo + amount);
     }
 
     private void Update()
@@ -27,7 +41,7 @@ public class SnowballShooter : MonoBehaviour
             return;
         }
 
-        if (Time.time < nextShotTime || snowballPrefab == null)
+        if (Time.time < nextShotTime || snowballPrefab == null || Ammo <= 0)
         {
             return;
         }
@@ -38,6 +52,7 @@ public class SnowballShooter : MonoBehaviour
         }
 
         nextShotTime = Time.time + cooldown;
+        Ammo--;
 
         Vector3 up = planetGravity.Up;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, up).normalized;
