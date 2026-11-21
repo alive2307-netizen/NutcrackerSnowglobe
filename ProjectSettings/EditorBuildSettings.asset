@@ -1,0 +1,12 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/SnowballLevel.unity
+    guid: 23530bdd4665045c9a108c07fbe7dc74
+  m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0
