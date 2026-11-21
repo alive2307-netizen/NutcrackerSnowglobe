@@ -30,7 +30,7 @@ public class MouseEnemy : MonoBehaviour
     public float chaseSpeed = 21f;
 
     [Tooltip("Сколько единиц шкалы Ёлки-2 крадёт мышь (одна игрушка).")]
-    public float stealAmount = 10f;
+    public float stealAmount = 5f;
 
     private Vector3 surfaceDir;
     private bool chasing;

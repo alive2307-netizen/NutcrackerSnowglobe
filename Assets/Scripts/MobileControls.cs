@@ -8,9 +8,11 @@ public class MobileControls : MonoBehaviour
     public GameObject[] touchControls;
     public Button calibrateButton;
 
+    private bool touch;
+
     private void Awake()
     {
-        bool touch = Application.isMobilePlatform || Touchscreen.current != null || Application.isEditor;
+        touch = Application.isMobilePlatform || Touchscreen.current != null || Application.isEditor;
 
         foreach (GameObject control in touchControls)
         {
@@ -20,8 +22,13 @@ public class MobileControls : MonoBehaviour
             }
         }
 
-        calibrateButton.gameObject.SetActive(touch);
         calibrateButton.onClick.AddListener(Calibrate);
+    }
+
+    private void Update()
+    {
+        bool inMenu = GameManager.Instance == null || GameManager.Instance.State == GameState.Menu;
+        calibrateButton.gameObject.SetActive(touch && inMenu);
     }
 
     public void Calibrate()

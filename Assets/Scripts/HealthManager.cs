@@ -5,7 +5,11 @@ public class HealthManager : MonoBehaviour
     [Tooltip("Сколько единиц нужно собрать, чтобы Ёлка-2 заполнилась и раунд был выигран.")]
     public float maxHealth = 100f;
 
+    [Tooltip("Сколько частей гирлянды нужно собрать для неуязвимости.")]
+    public int garlandPartsNeeded = 3;
+
     public float CurrentHealth { get; private set; }
+    public int GarlandParts { get; private set; }
     public bool IsInvincible => Time.time < invincibleUntil;
 
     private float invincibleUntil;
@@ -30,7 +34,6 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    // Возвращает false, если украсть нельзя (гирлянда или раунд не идёт): мышь тогда проходит мимо.
     public bool Steal(float amount)
     {
         if (amount <= 0f || IsInvincible || !IsRunning())
@@ -54,6 +57,22 @@ public class HealthManager : MonoBehaviour
 
         CurrentHealth = left;
         return true;
+    }
+
+    public void CollectGarlandPart(float duration)
+    {
+        if (!IsRunning())
+        {
+            return;
+        }
+
+        GarlandParts++;
+
+        if (GarlandParts >= garlandPartsNeeded)
+        {
+            GarlandParts = 0;
+            MakeInvincible(duration);
+        }
     }
 
     public void MakeInvincible(float duration)

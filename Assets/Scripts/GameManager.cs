@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    private static bool startAfterReload;
+
     [Header("References")]
     public PlayerMovement player;
 
@@ -30,6 +32,12 @@ public class GameManager : MonoBehaviour
         Instance = this;
         Time.timeScale = 1f;
         SetState(GameState.Menu);
+
+        if (startAfterReload)
+        {
+            startAfterReload = false;
+            StartRound();
+        }
     }
 
     public void StartRound()
@@ -73,6 +81,7 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+        startAfterReload = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

@@ -3,24 +3,25 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Следит за состоянием раунда: меняет музыку, играет звук выигрыша или поражения
-/// и показывает финал. Победа - конфетти над камерой, поражение - мыши, бегущие по экрану.
+/// и показывает финал. Победа - конфетти у камеры, поражение - мыши, бегущие по экрану.
 /// </summary>
 public class RoundDirector : MonoBehaviour
 {
-    private const int MouseCount = 10;
-    private const float HalfWidth = 620f;
-    private const float ConfettiBurst = 160;
+    private const int MouseCount = 12;
+    private const float HalfWidth = 700f;
+    private const float Bounce = 14f;
 
     public GameManager game;
     public RectTransform canvasRect;
-    public Sprite mouseSprite;
     public Transform cameraTransform;
 
     private GameState lastState = (GameState)(-1);
     private ParticleSystem confetti;
     private RectTransform miceRoot;
     private RectTransform[] mice;
-    private float[] miceSpeeds;
+    private float[] speeds;
+    private float[] baseY;
+    private float[] phases;
 
     private void Awake()
     {
@@ -57,8 +58,9 @@ public class RoundDirector : MonoBehaviour
             case GameState.Win:
                 AudioManager.PlayMusic(AudioManager.MusicTrack.Win);
                 AudioManager.Play(AudioManager.Sfx.Win);
+                confetti.transform.position = cameraTransform.position + cameraTransform.forward * 7f;
                 confetti.Play();
-                confetti.Emit((int)ConfettiBurst);
+                confetti.Emit(180);
                 break;
 
             case GameState.Lose:
@@ -72,28 +74,27 @@ public class RoundDirector : MonoBehaviour
     private void CreateConfetti()
     {
         GameObject go = new GameObject("Confetti");
-        go.transform.SetParent(cameraTransform, false);
-        go.transform.localPosition = new Vector3(0f, 2.5f, 9f);
-
         confetti = go.AddComponent<ParticleSystem>();
-        confetti.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        go.GetComponent<ParticleSystemRenderer>().sharedMaterial = new Material(Shader.Find("Sprites/Default"));
 
         ParticleSystem.MainModule main = confetti.main;
         main.playOnAwake = false;
         main.loop = false;
-        main.duration = 4f;
-        main.startLifetime = 4f;
-        main.startSpeed = 2f;
-        main.startSize = 0.3f;
-        main.gravityModifier = 0.5f;
-        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.3f, 0.3f), new Color(0.3f, 1f, 0.5f));
-
-        ParticleSystem.ShapeModule shape = confetti.shape;
-        shape.shapeType = ParticleSystemShapeType.Box;
-        shape.scale = new Vector3(14f, 0.5f, 1f);
+        main.duration = 3f;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.startLifetime = 3f;
+        main.startSpeed = new ParticleSystem.MinMaxCurve(4f, 9f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.25f, 0.45f);
+        main.gravityModifier = 0.6f;
+        main.maxParticles = 300;
+        main.startColor = new ParticleSystem.MinMaxGradient(new Color(1f, 0.2f, 0.2f), new Color(0.2f, 1f, 0.4f));
 
         ParticleSystem.EmissionModule emission = confetti.emission;
         emission.enabled = false;
+
+        ParticleSystem.ShapeModule shape = confetti.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 1.5f;
     }
 
     private void CreateMice()
@@ -107,8 +108,11 @@ public class RoundDirector : MonoBehaviour
         miceRoot.offsetMin = Vector2.zero;
         miceRoot.offsetMax = Vector2.zero;
 
+        Sprite sprite = MakeMouseSprite();
         mice = new RectTransform[MouseCount];
-        miceSpeeds = new float[MouseCount];
+        speeds = new float[MouseCount];
+        baseY = new float[MouseCount];
+        phases = new float[MouseCount];
 
         for (int i = 0; i < MouseCount; i++)
         {
@@ -118,16 +122,18 @@ public class RoundDirector : MonoBehaviour
             RectTransform rect = (RectTransform)m.transform;
             rect.anchorMin = new Vector2(0.5f, 0.5f);
             rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = new Vector2(110f, 64f);
-            rect.anchoredPosition = new Vector2(Random.Range(-HalfWidth, HalfWidth), Random.Range(-760f, -220f));
+            rect.sizeDelta = new Vector2(150f, 94f);
 
             Image image = m.GetComponent<Image>();
-            image.sprite = mouseSprite;
-            image.color = new Color(0.55f, 0.55f, 0.6f);
+            image.sprite = sprite;
             image.raycastTarget = false;
 
+            speeds[i] = (i % 2 == 0 ? 1f : -1f) * Random.Range(320f, 560f);
+            baseY[i] = Random.Range(-420f, -120f);
+            phases[i] = Random.Range(0f, 2f * Mathf.PI);
+            rect.anchoredPosition = new Vector2(Random.Range(-HalfWidth, HalfWidth), baseY[i]);
+
             mice[i] = rect;
-            miceSpeeds[i] = Random.Range(260f, 520f);
         }
 
         miceRoot.gameObject.SetActive(false);
@@ -140,17 +146,91 @@ public class RoundDirector : MonoBehaviour
             return;
         }
 
+        float dt = Time.deltaTime;
+        float t = Time.time;
+
         for (int i = 0; i < mice.Length; i++)
         {
             Vector2 pos = mice[i].anchoredPosition;
-            pos.x += miceSpeeds[i] * Time.deltaTime;
+            pos.x += speeds[i] * dt;
 
-            if (pos.x > HalfWidth + 80f)
+            if (pos.x > HalfWidth + 100f)
             {
-                pos.x = -HalfWidth - 80f;
+                pos.x = -HalfWidth - 100f;
+            }
+            else if (pos.x < -HalfWidth - 100f)
+            {
+                pos.x = HalfWidth + 100f;
             }
 
+            float wave = Mathf.Sin(t * 9f + phases[i]);
+            pos.y = baseY[i] + wave * Bounce;
+
             mice[i].anchoredPosition = pos;
+            mice[i].localScale = new Vector3(speeds[i] < 0f ? -1f : 1f, 1f, 1f);
+            mice[i].localEulerAngles = new Vector3(0f, 0f, wave * 6f);
         }
+    }
+
+    private static Sprite MakeMouseSprite()
+    {
+        const int w = 128;
+        const int h = 80;
+
+        Color fur = new Color(0.62f, 0.62f, 0.68f);
+        Color pink = new Color(0.95f, 0.6f, 0.68f);
+        Color eye = new Color(0.05f, 0.05f, 0.05f);
+
+        Color[] pixels = new Color[w * h];
+
+        for (int y = 0; y < h; y++)
+        {
+            for (int x = 0; x < w; x++)
+            {
+                Color c = Color.clear;
+
+                if (Inside(x, y, 104, 42, 3f, 3f))
+                {
+                    c = eye;
+                }
+                else if (Inside(x, y, 118, 36, 4f, 4f))
+                {
+                    c = pink;
+                }
+                else if (Inside(x, y, 52, 34, 38f, 20f) || Inside(x, y, 96, 38, 20f, 17f)
+                         || Inside(x, y, 90, 56, 9f, 9f) || Inside(x, y, 106, 58, 9f, 9f)
+                         || NearSegment(x, y, 16f, 30f, 2f, 12f, 2.5f)
+                         || (x >= 36 && x <= 42 && y <= 16) || (x >= 60 && x <= 66 && y <= 16))
+                {
+                    c = fur;
+                }
+
+                pixels[y * w + x] = c;
+            }
+        }
+
+        Texture2D tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
+        tex.filterMode = FilterMode.Point;
+        tex.SetPixels(pixels);
+        tex.Apply();
+
+        return Sprite.Create(tex, new Rect(0f, 0f, w, h), new Vector2(0.5f, 0.5f), 100f);
+    }
+
+    private static bool Inside(float x, float y, float cx, float cy, float rx, float ry)
+    {
+        float dx = (x - cx) / rx;
+        float dy = (y - cy) / ry;
+        return dx * dx + dy * dy <= 1f;
+    }
+
+    private static bool NearSegment(float x, float y, float x0, float y0, float x1, float y1, float r)
+    {
+        float vx = x1 - x0;
+        float vy = y1 - y0;
+        float t = Mathf.Clamp01(((x - x0) * vx + (y - y0) * vy) / (vx * vx + vy * vy));
+        float dx = x0 + vx * t - x;
+        float dy = y0 + vy * t - y;
+        return dx * dx + dy * dy <= r * r;
     }
 }

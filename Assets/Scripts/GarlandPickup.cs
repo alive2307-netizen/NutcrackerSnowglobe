@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GarlandPickup : Collectible
 {
-    [Tooltip("Длительность неуязвимости, секунд.")]
+    [Tooltip("Длительность неуязвимости после сбора всех частей, секунд.")]
     public float duration = 10f;
 
     protected override void OnCollect(PlayerMovement player)
@@ -11,7 +11,7 @@ public class GarlandPickup : Collectible
 
         if (health != null)
         {
-            health.MakeInvincible(duration);
+            health.CollectGarlandPart(duration);
         }
     }
 }

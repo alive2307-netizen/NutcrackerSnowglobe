@@ -50,7 +50,6 @@ public static class Stage13SceneTool
         director.game = game;
         director.canvasRect = (RectTransform)canvas.transform;
         director.cameraTransform = Camera.main.transform;
-        director.mouseSprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
 
         Scene scene = EditorSceneManager.GetActiveScene();
         EditorSceneManager.MarkSceneDirty(scene);
