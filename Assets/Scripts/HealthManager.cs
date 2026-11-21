@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HealthManager : MonoBehaviour
 {
-    [Tooltip("Сколько единиц нужно набрать, чтобы шкала Ёлки-2 заполнилась и раунд был выигран.")]
+    [Tooltip("Сколько единиц нужно собрать, чтобы Ёлка-2 заполнилась и раунд был выигран.")]
     public float maxHealth = 100f;
 
     public float CurrentHealth { get; private set; }
@@ -30,14 +30,22 @@ public class HealthManager : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float amount)
+    // Возвращает true, если мышь забрала игрушки: тогда она исчезает.
+    public bool LoseAllToys()
     {
-        if (amount <= 0f || IsInvincible || !IsRunning())
+        if (CurrentHealth <= 0f || IsInvincible || !IsRunning())
         {
-            return;
+            return false;
         }
 
-        CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
+        CurrentHealth = 0f;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver("Мыши забрали все игрушки");
+        }
+
+        return true;
     }
 
     public void MakeInvincible(float duration)

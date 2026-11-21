@@ -16,12 +16,7 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     public PlayerMovement player;
 
-    [Header("Round")]
-    [Tooltip("Сколько секунд нужно продержаться до победы. Временное правило до этапа 10 (звезда на ёлке).")]
-    public float roundDuration = 60f;
-
     public GameState State { get; private set; } = GameState.Menu;
-    public float TimeLeft { get; private set; }
     public string ResultReason { get; private set; } = "";
 
     public int Score { get; private set; }
@@ -37,21 +32,6 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Menu);
     }
 
-    private void Update()
-    {
-        if (State != GameState.Running)
-        {
-            return;
-        }
-
-        TimeLeft -= Time.deltaTime;
-
-        if (TimeLeft <= 0f)
-        {
-            Finish(GameState.Win, "Вы продержались весь раунд");
-        }
-    }
-
     public void StartRound()
     {
         if (State == GameState.Running)
@@ -59,7 +39,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        TimeLeft = roundDuration;
         ResultReason = "";
         Score = 0;
         scoreMultiplierUntil = 0f;
@@ -69,6 +48,11 @@ public class GameManager : MonoBehaviour
     public void GameOver(string reason)
     {
         Finish(GameState.Lose, reason);
+    }
+
+    public void Win(string reason)
+    {
+        Finish(GameState.Win, reason);
     }
 
     public void AddScore(int basePoints)
@@ -87,11 +71,6 @@ public class GameManager : MonoBehaviour
         scoreMultiplierUntil = Time.time + duration;
     }
 
-    public void Win(string reason)
-    {
-        Finish(GameState.Win, reason);
-    }
-
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -106,6 +85,7 @@ public class GameManager : MonoBehaviour
 
         ResultReason = reason;
         SetState(result);
+        AudioManager.Play(result == GameState.Win ? AudioManager.Sfx.Win : AudioManager.Sfx.Lose);
         Debug.Log("[Щелкунчик] Раунд окончен: " + result + ". " + reason);
     }
 

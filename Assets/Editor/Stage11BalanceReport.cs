@@ -2,8 +2,7 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Этап 11: выводит в Console сводку баланса раунда: длину трассы, расстояние за раунд
-/// при минимальной, базовой и максимальной скорости, количество препятствий и предметов.
+/// Выводит в Console сводку по трассе: длину круга, скорость и количество объектов.
 /// Ничего в сцене не меняет.
 /// </summary>
 public static class Stage11BalanceReport
@@ -22,11 +21,6 @@ public static class Stage11BalanceReport
 
         float radius = 30f;
         float circumference = 2f * Mathf.PI * radius;
-        float duration = game.roundDuration;
-
-        float slowDistance = player.minSpeed * duration;
-        float baseDistance = player.baseSpeed * duration;
-        float fastDistance = player.maxSpeed * duration;
 
         int trees = CountNamed("Tree");
         int drifts = CountNamed("Snowdrift");
@@ -38,13 +32,10 @@ public static class Stage11BalanceReport
         int mice = Object.FindObjectsOfType<MouseEnemy>().Length;
 
         string report =
-            "[Баланс раунда]\n" +
+            "[Баланс]\n" +
             "Длина большого круга трассы: " + circumference.ToString("0") + " м\n" +
-            "Длительность раунда: " + duration.ToString("0") + " с\n" +
-            "Путь за раунд: при " + player.minSpeed + " м/с — " + slowDistance.ToString("0") +
-            " м, при " + player.baseSpeed + " м/с — " + baseDistance.ToString("0") +
-            " м, при " + player.maxSpeed + " м/с — " + fastDistance.ToString("0") + " м\n" +
-            "Кругов при базовой скорости: " + (baseDistance / circumference).ToString("0.0") + "\n" +
+            "Скорость: мин " + player.minSpeed + ", база " + player.baseSpeed + ", макс " + player.maxSpeed + " м/с\n" +
+            "Круг при базовой скорости: " + (circumference / player.baseSpeed).ToString("0") + " с\n" +
             "Ёлки: " + trees + ", сугробы: " + drifts + ", лёд: " + ice + "\n" +
             "Игрушки: " + toys + ", мишура: " + tinsel + ", гирлянды: " + garlands +
             ", снежки: " + snowballs + ", мыши: " + mice;

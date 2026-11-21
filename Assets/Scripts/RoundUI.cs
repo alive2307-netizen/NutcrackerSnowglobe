@@ -27,6 +27,7 @@ public class RoundUI : MonoBehaviour
     {
         playButton.onClick.AddListener(game.StartRound);
         restartButton.onClick.AddListener(game.Restart);
+        timerText.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -44,7 +45,6 @@ public class RoundUI : MonoBehaviour
             resultReason.text = game.ResultReason;
         }
 
-        timerText.text = "Время: " + Mathf.CeilToInt(game.TimeLeft) + " с";
         healthText.text = "Ёлка: " + Mathf.CeilToInt(health.CurrentHealth) + " / " + Mathf.CeilToInt(health.maxHealth);
 
         if (scoreText != null)

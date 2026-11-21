@@ -20,9 +20,6 @@ public class MouseEnemy : MonoBehaviour
     [Tooltip("Стартовый угол на круге, градусов.")]
     public float startAngle;
 
-    [Tooltip("Урон игроку при касании.")]
-    public float damageToPlayer = 15f;
-
     private float angle;
 
     private void Start()
@@ -65,6 +62,7 @@ public class MouseEnemy : MonoBehaviour
         if (projectile != null)
         {
             Destroy(projectile.gameObject);
+            AudioManager.Play(AudioManager.Sfx.Splat);
             Destroy(gameObject);
             return;
         }
@@ -78,12 +76,12 @@ public class MouseEnemy : MonoBehaviour
 
         HealthManager health = player.GetComponent<HealthManager>();
 
-        if (health == null || health.IsInvincible)
+        if (health == null || !health.LoseAllToys())
         {
             return;
         }
 
-        health.TakeDamage(damageToPlayer);
+        AudioManager.Play(AudioManager.Sfx.Hurt);
         Destroy(gameObject);
     }
 }
