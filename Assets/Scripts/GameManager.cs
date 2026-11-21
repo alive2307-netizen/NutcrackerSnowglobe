@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour
     public float TimeLeft { get; private set; }
     public string ResultReason { get; private set; } = "";
 
+    public int Score { get; private set; }
+    public bool IsScoreMultiplied => Time.time < scoreMultiplierUntil;
+
+    private float scoreMultiplier = 1f;
+    private float scoreMultiplierUntil;
+
     private void Awake()
     {
         Instance = this;
@@ -55,12 +61,30 @@ public class GameManager : MonoBehaviour
 
         TimeLeft = roundDuration;
         ResultReason = "";
+        Score = 0;
+        scoreMultiplierUntil = 0f;
         SetState(GameState.Running);
     }
 
     public void GameOver(string reason)
     {
         Finish(GameState.Lose, reason);
+    }
+
+    public void AddScore(int basePoints)
+    {
+        if (State != GameState.Running || basePoints <= 0)
+        {
+            return;
+        }
+
+        Score += Mathf.RoundToInt(basePoints * (IsScoreMultiplied ? scoreMultiplier : 1f));
+    }
+
+    public void ApplyScoreMultiplier(float multiplier, float duration)
+    {
+        scoreMultiplier = multiplier;
+        scoreMultiplierUntil = Time.time + duration;
     }
 
     public void Win(string reason)

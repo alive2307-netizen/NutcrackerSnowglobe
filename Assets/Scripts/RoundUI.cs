@@ -21,6 +21,7 @@ public class RoundUI : MonoBehaviour
     public Text resultReason;
     public Text timerText;
     public Text healthText;
+    public Text scoreText;
 
     private void Awake()
     {
@@ -45,5 +46,10 @@ public class RoundUI : MonoBehaviour
 
         timerText.text = "Время: " + Mathf.CeilToInt(game.TimeLeft) + " с";
         healthText.text = "Ёлка: " + Mathf.CeilToInt(health.CurrentHealth) + " / " + Mathf.CeilToInt(health.maxHealth);
+
+        if (scoreText != null)
+        {
+            scoreText.text = "Очки: " + game.Score + (game.IsScoreMultiplied ? " (x2)" : "");
+        }
     }
 }
