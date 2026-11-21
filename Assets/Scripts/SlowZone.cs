@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Сугроб: триггер, при входе игрока замедляет его на несколько секунд.</summary>
+/// <summary>Сугроб: тригер, при входе игрока замедляет его и играет звук удара о снег.</summary>
 [RequireComponent(typeof(Collider))]
 public class SlowZone : MonoBehaviour
 {
@@ -17,6 +17,7 @@ public class SlowZone : MonoBehaviour
         if (player != null)
         {
             player.ApplySlow(slowMultiplier, duration);
+            AudioManager.Play(AudioManager.Sfx.SnowHit);
         }
     }
 }

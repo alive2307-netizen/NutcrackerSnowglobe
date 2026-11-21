@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Ледяная дорожка: триггер, при входе игрока ускоряет его на несколько секунд.</summary>
+/// <summary>Каток: тригер, при входе игрока ускоряет его, пока он на льду, и играет звук скольжения.</summary>
 [RequireComponent(typeof(Collider))]
 public class SpeedBoost : MonoBehaviour
 {
@@ -17,6 +17,15 @@ public class SpeedBoost : MonoBehaviour
         if (player != null)
         {
             player.ApplySpeedBoost(boostMultiplier, duration);
+            AudioManager.SetSkating(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.GetComponentInParent<PlayerMovement>() != null)
+        {
+            AudioManager.SetSkating(false);
         }
     }
 }

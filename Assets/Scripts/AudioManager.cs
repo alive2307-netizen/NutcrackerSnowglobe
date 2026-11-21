@@ -10,7 +10,9 @@ public class AudioManager : MonoBehaviour
         Splat,
         Hurt,
         Win,
-        Lose
+        Lose,
+        Bite,
+        SnowHit
     }
 
     public enum MusicTrack
@@ -43,9 +45,15 @@ public class AudioManager : MonoBehaviour
     public AudioClip hurtSound;
     public AudioClip winSound;
     public AudioClip loseSound;
+    public AudioClip biteSound;
+    public AudioClip snowHitSound;
+
+    [Header("Looping")]
+    public AudioClip skateClip;
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
+    private AudioSource skateSource;
 
     private void Awake()
     {
@@ -59,6 +67,12 @@ public class AudioManager : MonoBehaviour
 
         sfxSource = gameObject.AddComponent<AudioSource>();
         sfxSource.mute = !SfxOn;
+
+        skateSource = gameObject.AddComponent<AudioSource>();
+        skateSource.clip = skateClip;
+        skateSource.loop = true;
+        skateSource.volume = 0.6f;
+        skateSource.mute = !SfxOn;
     }
 
     public static void ToggleMusic()
@@ -80,6 +94,7 @@ public class AudioManager : MonoBehaviour
         if (instance != null)
         {
             instance.sfxSource.mute = !SfxOn;
+            instance.skateSource.mute = !SfxOn;
         }
     }
 
@@ -95,6 +110,23 @@ public class AudioManager : MonoBehaviour
         if (clip != null)
         {
             instance.sfxSource.PlayOneShot(clip);
+        }
+    }
+
+    public static void SetSkating(bool on)
+    {
+        if (instance == null || instance.skateClip == null)
+        {
+            return;
+        }
+
+        if (on && !instance.skateSource.isPlaying)
+        {
+            instance.skateSource.Play();
+        }
+        else if (!on && instance.skateSource.isPlaying)
+        {
+            instance.skateSource.Stop();
         }
     }
 
@@ -126,6 +158,8 @@ public class AudioManager : MonoBehaviour
             case Sfx.Splat: return splatSound;
             case Sfx.Hurt: return hurtSound;
             case Sfx.Win: return winSound;
+            case Sfx.Bite: return biteSound;
+            case Sfx.SnowHit: return snowHitSound;
             default: return loseSound;
         }
     }

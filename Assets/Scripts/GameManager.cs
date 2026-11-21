@@ -100,6 +100,7 @@ public class GameManager : MonoBehaviour
 
         ResultReason = reason;
         SetState(result);
+        AudioManager.SetSkating(false);
         AudioManager.Play(result == GameState.Win ? AudioManager.Sfx.Win : AudioManager.Sfx.Lose);
         Debug.Log("[Щелкунчик] Раунд окончен: " + result + ". " + reason);
     }

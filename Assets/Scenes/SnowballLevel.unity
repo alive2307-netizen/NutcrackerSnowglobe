@@ -8366,6 +8366,9 @@ MonoBehaviour:
   hurtSound: {fileID: 8300000, guid: 74820483d7df2448eb47296aa611adfe, type: 3}
   winSound: {fileID: 8300000, guid: 37cd751c5b199485c977c720193f4721, type: 3}
   loseSound: {fileID: 8300000, guid: a1888d65c37034867862b11af4ba0eb1, type: 3}
+  biteSound: {fileID: 8300000, guid: 4d1fca3688c5b490ea7e8c801e7b9a2b, type: 3}
+  snowHitSound: {fileID: 8300000, guid: 0cd785671b0da4d3eb38d86064b0f471, type: 3}
+  skateClip: {fileID: 8300000, guid: c6730b0db7d9447ffbf0dc0969978017, type: 3}
 --- !u!4 &1040122623
 Transform:
   m_ObjectHideFlags: 0

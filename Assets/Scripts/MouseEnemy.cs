@@ -139,7 +139,7 @@ public class MouseEnemy : MonoBehaviour
             return;
         }
 
-        AudioManager.Play(AudioManager.Sfx.Hurt);
+        AudioManager.Play(AudioManager.Sfx.Bite);
         Destroy(gameObject);
     }
 }
