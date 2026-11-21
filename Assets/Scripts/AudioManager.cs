@@ -21,7 +21,13 @@ public class AudioManager : MonoBehaviour
         Lose
     }
 
+    private const string MusicKey = "music_on";
+    private const string SfxKey = "sfx_on";
+
     private static AudioManager instance;
+
+    public static bool MusicOn { get; private set; } = true;
+    public static bool SfxOn { get; private set; } = true;
 
     [Header("Music")]
     public AudioClip menuMusic;
@@ -44,9 +50,37 @@ public class AudioManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        MusicOn = PlayerPrefs.GetInt(MusicKey, 1) == 1;
+        SfxOn = PlayerPrefs.GetInt(SfxKey, 1) == 1;
+
         musicSource = gameObject.AddComponent<AudioSource>();
         musicSource.loop = true;
+        musicSource.mute = !MusicOn;
+
         sfxSource = gameObject.AddComponent<AudioSource>();
+        sfxSource.mute = !SfxOn;
+    }
+
+    public static void ToggleMusic()
+    {
+        MusicOn = !MusicOn;
+        PlayerPrefs.SetInt(MusicKey, MusicOn ? 1 : 0);
+
+        if (instance != null)
+        {
+            instance.musicSource.mute = !MusicOn;
+        }
+    }
+
+    public static void ToggleSfx()
+    {
+        SfxOn = !SfxOn;
+        PlayerPrefs.SetInt(SfxKey, SfxOn ? 1 : 0);
+
+        if (instance != null)
+        {
+            instance.sfxSource.mute = !SfxOn;
+        }
     }
 
     public static void Play(Sfx effect)
