@@ -1,17 +1,22 @@
 using UnityEngine;
 
-/// <summary>
-/// Заглушка звука (этап 13). Клипы не назначены, поэтому Play ничего не делает.
-/// Треки и лицензии перечислены в Assets/Audio/TRACKS.md.
-/// </summary>
 public class AudioManager : MonoBehaviour
 {
     public enum Sfx
     {
+        Click,
         Pickup,
         Shot,
-        Hurt,
         Splat,
+        Hurt,
+        Win,
+        Lose
+    }
+
+    public enum MusicTrack
+    {
+        Menu,
+        Round,
         Win,
         Lose
     }
@@ -21,20 +26,26 @@ public class AudioManager : MonoBehaviour
     [Header("Music")]
     public AudioClip menuMusic;
     public AudioClip roundMusic;
+    public AudioClip winMusic;
+    public AudioClip loseMusic;
 
     [Header("Sound effects")]
-    public AudioClip pickupClip;
-    public AudioClip shotClip;
-    public AudioClip hurtClip;
-    public AudioClip splatClip;
-    public AudioClip winClip;
-    public AudioClip loseClip;
+    public AudioClip clickSound;
+    public AudioClip pickupSound;
+    public AudioClip shotSound;
+    public AudioClip splatSound;
+    public AudioClip hurtSound;
+    public AudioClip winSound;
+    public AudioClip loseSound;
 
+    private AudioSource musicSource;
     private AudioSource sfxSource;
 
     private void Awake()
     {
         instance = this;
+        musicSource = gameObject.AddComponent<AudioSource>();
+        musicSource.loop = true;
         sfxSource = gameObject.AddComponent<AudioSource>();
     }
 
@@ -53,16 +64,46 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public static void PlayMusic(MusicTrack track)
+    {
+        if (instance == null)
+        {
+            return;
+        }
+
+        AudioClip clip = instance.ClipFor(track);
+
+        if (clip == null || instance.musicSource.clip == clip)
+        {
+            return;
+        }
+
+        instance.musicSource.clip = clip;
+        instance.musicSource.Play();
+    }
+
     private AudioClip ClipFor(Sfx effect)
     {
         switch (effect)
         {
-            case Sfx.Pickup: return pickupClip;
-            case Sfx.Shot: return shotClip;
-            case Sfx.Hurt: return hurtClip;
-            case Sfx.Splat: return splatClip;
-            case Sfx.Win: return winClip;
-            default: return loseClip;
+            case Sfx.Click: return clickSound;
+            case Sfx.Pickup: return pickupSound;
+            case Sfx.Shot: return shotSound;
+            case Sfx.Splat: return splatSound;
+            case Sfx.Hurt: return hurtSound;
+            case Sfx.Win: return winSound;
+            default: return loseSound;
+        }
+    }
+
+    private AudioClip ClipFor(MusicTrack track)
+    {
+        switch (track)
+        {
+            case MusicTrack.Menu: return menuMusic;
+            case MusicTrack.Round: return roundMusic;
+            case MusicTrack.Win: return winMusic;
+            default: return loseMusic;
         }
     }
 }

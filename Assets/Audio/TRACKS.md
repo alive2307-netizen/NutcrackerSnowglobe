@@ -1,34 +1,30 @@
-# Звук «Щелкунчика»: треки и лицензии
+# Звук и музыка: что в игре
 
-Статус: заглушка. Слоты в `AudioManager` пустые, клипы пока не добавлены.
+Источник музыки: Leopold Stokowski, Philadelphia Orchestra, 1926, часть первая записи «The Nutcracker Suite» (Internet Archive, TchaikovskyTheNutcrackerSuite). Лицензия записи: CC BY 3.0. Авторство: П. И. Чайковский, балет «Щелкунчик».
 
-## Кандидат на музыку
+Точные границы номеров записи я определил по паузам в аудио, а не по официальному треклисту, поэтому названия фрагментов условные.
 
-Leopold Stokowski, Philadelphia Orchestra, запись 1926 года, transfer Bob Varney.
-Источник: https://archive.org/details/TchaikovskyTheNutcrackerSuite
-Лицензия на странице: **Attribution 3.0 (CC BY 3.0)**. Разрешено коммерческое использование, обязательно указать автора и источник.
+| Файл | Где звучит | Фрагмент записи |
+|---|---|---|
+| Music/menu.ogg | экран меню | 0:00 - 4:43 |
+| Music/round.ogg | раунд | 4:46 - 8:01 |
+| Music/win.ogg | победа | 8:00 - 11:39 |
+| Music/lose.ogg | поражение | 11:42 - 12:40 |
 
-Треки на записи (Op. 71a):
-1. Miniature Overture
-2. March
-3. Dance of the Sugar Plum Fairy
-4. Trepak (Russian Dance)
-5. Arabian Dance
-6. Chinese Dance
-7. Dance of the Flutes
-8. Waltz of the Flowers
+Звуковые эффекты сгенерированы программой (синтез), не записаны с инструментов:
 
-## Не использовать
+| Файл | Событие |
+|---|---|
+| Sfx/click.wav | нажатие «ИГРАТЬ» |
+| Sfx/pickup.wav | подбор игрушки, мишуры, гирлянды, снежка |
+| Sfx/shot.wav | выстрел снежком |
+| Sfx/splat.wav | попадание снежка в мышь |
+| Sfx/hurt.wav | урон от мыши |
+| Sfx/win.wav | победа |
+| Sfx/lose.wav | поражение |
 
-- Artur Rodzinski, RPO London, 1955: https://archive.org/details/TCHAIKOVSKYNutcrackerBalletcomplete. Лицензия CC BY-NC-ND: запрещены коммерческое использование и переработка.
-- Bob Varney, Nutcracker Ballet Suite: https://archive.org/details/nutcracker-ballet-suite. Лицензия на странице не указана, пока не проверена.
+Финал:
+- победа: конфетти над камерой;
+- поражение: по экрану пробегают серые мыши.
 
-## Перед релизом
-
-1. Открыть страницу записи и проверить лицензию ещё раз.
-2. Добавить титры в игре: «Музыка: П. И. Чайковский, Балет «Щелкунчик», запись Leopold Stokowski / Philadelphia Orchestra (1926), CC BY 3.0, Internet Archive».
-3. Файлы в проект класть через импорт Unity, а не копировать вручную, чтобы появились `.meta`.
-
-## Звуковые эффекты
-
-Не выбраны. Сейчас слоты `collectSound`, `hitSound`, `winSound`, `loseSound` пустые.
+Чтобы заменить музыку на другую запись, положите файл в Assets/Audio/Music, назовите как выше и переимпортируйте, либо назначьте клип вручную в поле AudioManager.
