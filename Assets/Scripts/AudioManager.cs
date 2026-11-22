@@ -58,10 +58,12 @@ public class AudioManager : MonoBehaviour
 
     [Header("Looping")]
     public AudioClip skateClip;
+    public AudioClip gnawClip;
 
     private AudioSource musicSource;
     private AudioSource sfxSource;
     private AudioSource skateSource;
+    private AudioSource gnawSource;
 
     private void Awake()
     {
@@ -81,6 +83,12 @@ public class AudioManager : MonoBehaviour
         skateSource.loop = true;
         skateSource.volume = 0.6f;
         skateSource.mute = !SfxOn;
+
+        gnawSource = gameObject.AddComponent<AudioSource>();
+        gnawSource.clip = gnawClip;
+        gnawSource.loop = true;
+        gnawSource.volume = 0.7f;
+        gnawSource.mute = !SfxOn;
     }
 
     public static void ToggleMusic()
@@ -103,6 +111,7 @@ public class AudioManager : MonoBehaviour
         {
             instance.sfxSource.mute = !SfxOn;
             instance.skateSource.mute = !SfxOn;
+            instance.gnawSource.mute = !SfxOn;
         }
     }
 
@@ -135,6 +144,23 @@ public class AudioManager : MonoBehaviour
         else if (!on && instance.skateSource.isPlaying)
         {
             instance.skateSource.Stop();
+        }
+    }
+
+    public static void SetGnawing(bool on)
+    {
+        if (instance == null || instance.gnawClip == null)
+        {
+            return;
+        }
+
+        if (on && !instance.gnawSource.isPlaying)
+        {
+            instance.gnawSource.Play();
+        }
+        else if (!on && instance.gnawSource.isPlaying)
+        {
+            instance.gnawSource.Stop();
         }
     }
 

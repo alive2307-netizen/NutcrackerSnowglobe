@@ -49,7 +49,7 @@ public class HealthManager : MonoBehaviour
 
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.GameOver("Мыши украли больше игрушек, чем вы собрали");
+                GameManager.Instance.GameOverByTheft("Мыши украли больше игрушек, чем вы собрали");
             }
 
             return true;

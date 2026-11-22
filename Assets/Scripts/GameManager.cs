@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     private float scoreMultiplier = 1f;
     private float scoreMultiplierUntil;
     private float stateEndsAt;
+    private bool defeatByTheft;
 
     private void Awake()
     {
@@ -58,6 +59,8 @@ public class GameManager : MonoBehaviour
             SetState(GameState.Lose);
             Debug.Log("[Щелкунчик] Раунд окончен: Lose. " + ResultReason);
         }
+
+        AudioManager.SetGnawing(State == GameState.Defeat && defeatByTheft);
     }
 
     public void StartRound()
@@ -70,6 +73,7 @@ public class GameManager : MonoBehaviour
         ResultReason = "";
         Score = 0;
         scoreMultiplierUntil = 0f;
+        defeatByTheft = false;
         stateEndsAt = Time.time + CountdownSeconds;
         SetState(GameState.Countdown);
     }
@@ -84,6 +88,17 @@ public class GameManager : MonoBehaviour
         ResultReason = reason;
         stateEndsAt = Time.time + DefeatPauseSeconds;
         SetState(GameState.Defeat);
+    }
+
+    public void GameOverByTheft(string reason)
+    {
+        if (State != GameState.Running)
+        {
+            return;
+        }
+
+        defeatByTheft = true;
+        GameOver(reason);
     }
 
     public void Win(string reason)

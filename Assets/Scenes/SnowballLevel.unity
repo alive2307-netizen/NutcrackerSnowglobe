@@ -8514,6 +8514,7 @@ MonoBehaviour:
   garlandPickupSound: {fileID: 8300000, guid: 6b2182da6437a4138a50ea7cb8d9445b, type: 3}
   treeHitSound: {fileID: 8300000, guid: 74d7506b5fdc9476fbaf242279c8f131, type: 3}
   skateClip: {fileID: 8300000, guid: c6730b0db7d9447ffbf0dc0969978017, type: 3}
+  gnawClip: {fileID: 8300000, guid: 79027176705cb40adb304806d23407ec, type: 3}
 --- !u!4 &1040122623
 Transform:
   m_ObjectHideFlags: 0
