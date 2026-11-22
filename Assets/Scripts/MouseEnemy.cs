@@ -113,6 +113,13 @@ public class MouseEnemy : MonoBehaviour
         }
     }
 
+    private void Burst()
+    {
+        AudioManager.Play(AudioManager.Sfx.Splat);
+        SplatEffect.Spawn(transform.position);
+        Vanish();
+    }
+
     public void Vanish()
     {
         gameObject.SetActive(false);
@@ -156,7 +163,18 @@ public class MouseEnemy : MonoBehaviour
 
         HealthManager health = player.GetComponent<HealthManager>();
 
-        if (health == null || !health.Steal(stealAmount))
+        if (health == null)
+        {
+            return;
+        }
+
+        if (health.IsInvincible)
+        {
+            Burst();
+            return;
+        }
+
+        if (!health.Steal(stealAmount))
         {
             return;
         }
