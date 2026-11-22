@@ -10,8 +10,9 @@ public class TreeCollision : MonoBehaviour
             return;
         }
 
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && GameManager.Instance.State == GameState.Running)
         {
+            AudioManager.Play(AudioManager.Sfx.TreeHit);
             GameManager.Instance.GameOver("столкновение с ёлкой");
         }
         else

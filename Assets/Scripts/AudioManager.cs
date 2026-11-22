@@ -15,7 +15,8 @@ public class AudioManager : MonoBehaviour
         SnowHit,
         ToyPickup,
         TinselPickup,
-        GarlandPickup
+        GarlandPickup,
+        TreeHit
     }
 
     public enum MusicTrack
@@ -53,6 +54,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip toyPickupSound;
     public AudioClip tinselPickupSound;
     public AudioClip garlandPickupSound;
+    public AudioClip treeHitSound;
 
     [Header("Looping")]
     public AudioClip skateClip;
@@ -169,6 +171,7 @@ public class AudioManager : MonoBehaviour
             case Sfx.ToyPickup: return toyPickupSound;
             case Sfx.TinselPickup: return tinselPickupSound;
             case Sfx.GarlandPickup: return garlandPickupSound;
+            case Sfx.TreeHit: return treeHitSound;
             default: return loseSound;
         }
     }
