@@ -39,12 +39,6 @@ public static class Stage33Tool
         DestroyNamed("Bulb");
 
         TreeIndicator tree = Object.FindFirstObjectByType<TreeIndicator>();
-        if (tree != null)
-        {
-            tree.bulbs = new Image[0];
-            tree.bulbLevels = new float[0];
-            EditorUtility.SetDirty(tree);
-        }
 
         shooter.maxAmmo = SnowSlots;
         EditorUtility.SetDirty(shooter);
