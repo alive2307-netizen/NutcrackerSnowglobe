@@ -20,6 +20,8 @@ public class ShopMenu : MonoBehaviour
     {
         bool menu = GameManager.Instance == null || GameManager.Instance.State == GameState.Menu;
 
+        openButton.gameObject.SetActive(menu);
+
         if (!menu)
         {
             open = false;

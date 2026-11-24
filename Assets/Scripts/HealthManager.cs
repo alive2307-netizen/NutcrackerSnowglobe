@@ -31,7 +31,7 @@ public class HealthManager : MonoBehaviour
 
         if (CurrentHealth >= maxHealth && GameManager.Instance != null)
         {
-            GameManager.Instance.Win("Ёлка полностью украшена");
+            GameManager.Instance.TryWin();
         }
     }
 

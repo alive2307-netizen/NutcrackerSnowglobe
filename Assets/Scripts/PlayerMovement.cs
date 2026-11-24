@@ -1,5 +1,11 @@
 using UnityEngine;
 
+/// <summary>
+/// Бег по планете: персонаж не может остановиться. Ось X ввода поворачивает курс,
+/// ось Y меняет скорость в пределах minSpeed..maxSpeed, прыжок - импульс вдоль нормали.
+/// Замедление (сугроб) и ускорение (лёд) накладываются множителем на целевую скорость.
+/// Вращением управляет PlanetGravity, здесь только передаётся поворот через AddYaw.
+/// </summary>
 [RequireComponent(typeof(Rigidbody), typeof(PlanetGravity))]
 [DefaultExecutionOrder(-10)]
 public class PlayerMovement : MonoBehaviour
@@ -8,10 +14,13 @@ public class PlayerMovement : MonoBehaviour
     public InputReader input;
 
     [Header("Run")]
-    [Tooltip("Скорость бега по трассе, м/с. Меняется только сугробами и льдом.")]
+    [Tooltip("Скорость без наклона джойстика вперёд-назад, м/с.")]
     public float baseSpeed = 10f;
 
-    [Tooltip("Верхняя граница скорости с учётом льда, м/с.")]
+    public float minSpeed = 6f;
+    public float maxSpeed = 16f;
+
+    [Tooltip("Верхняя граница скорости с учётом ускорения от льда, м/с.")]
     public float maxBoostedSpeed = 28f;
 
     [Tooltip("Как быстро скорость догоняет целевую, м/с².")]
@@ -54,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         speed = baseSpeed;
     }
 
+    /// <summary>Замедление на duration секунд (сугроб). Повторное касание продлевает таймер.</summary>
     public void ApplySlow(float multiplier, float duration)
     {
         slowMultiplier = multiplier;
@@ -61,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("Замедление x" + multiplier + " на " + duration + " с");
     }
 
+    /// <summary>Ускорение на duration секунд (лёд). Повторное касание продлевает таймер.</summary>
     public void ApplySpeedBoost(float multiplier, float duration)
     {
         boostMultiplier = multiplier;
@@ -92,21 +103,24 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        planetGravity.AddYaw(input.Move.x * turnSpeed * Time.fixedDeltaTime);
+        Vector2 move = input.Move;
 
-        float targetSpeed = baseSpeed;
+        planetGravity.AddYaw(move.x * turnSpeed * Time.fixedDeltaTime);
+
+        float targetSpeed = move.y >= 0f
+            ? baseSpeed + move.y * (maxSpeed - baseSpeed)
+            : baseSpeed + move.y * (baseSpeed - minSpeed);
 
         if (IsSlowed)
         {
-            targetSpeed *= slowMultiplier;
+            targetSpeed = baseSpeed * slowMultiplier;
         }
-
-        if (IsBoosted)
+        else if (IsBoosted)
         {
-            targetSpeed *= boostMultiplier;
+            targetSpeed = baseSpeed * boostMultiplier;
         }
 
-        targetSpeed = Mathf.Min(targetSpeed, maxBoostedSpeed);
+        targetSpeed = Mathf.Clamp(targetSpeed, minSpeed * 0.5f, maxBoostedSpeed);
         speed = Mathf.MoveTowards(speed, targetSpeed, acceleration * Time.fixedDeltaTime);
 
         Vector3 forward = Vector3.ProjectOnPlane(body.rotation * Vector3.forward, up).normalized;

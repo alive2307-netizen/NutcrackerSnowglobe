@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     private float stateEndsAt;
     private float reviveGraceUntil;
     private bool defeatByTheft;
+    private bool phraseCollected;
 
     private void Awake()
     {
@@ -118,6 +119,27 @@ public class GameManager : MonoBehaviour
         CoinWallet.Add(WinReward);
         SetState(GameState.Win);
         Debug.Log("[Щелкунчик] Раунд окончен: Win. " + reason);
+    }
+
+    public void MarkPhraseCollected()
+    {
+        phraseCollected = true;
+        TryWin();
+    }
+
+    public void TryWin()
+    {
+        if (!phraseCollected || player == null)
+        {
+            return;
+        }
+
+        HealthManager health = player.GetComponent<HealthManager>();
+
+        if (health != null && health.CurrentHealth >= health.maxHealth)
+        {
+            Win("Фраза собрана и ёлка украшена");
+        }
     }
 
     public bool TryReviveWithCoins()

@@ -9,8 +9,27 @@ public class TreeIndicator : MonoBehaviour
     public float[] bulbLevels;
     public Color[] bulbColors;
 
+    private bool visible = true;
+
     private void Update()
     {
+        bool show = GameManager.Instance == null || GameManager.Instance.State != GameState.Menu;
+
+        if (show != visible)
+        {
+            visible = show;
+
+            foreach (Transform child in transform)
+            {
+                child.gameObject.SetActive(show);
+            }
+        }
+
+        if (!show)
+        {
+            return;
+        }
+
         float level = health.maxHealth > 0f ? health.CurrentHealth / health.maxHealth : 0f;
         fill.fillAmount = level;
 

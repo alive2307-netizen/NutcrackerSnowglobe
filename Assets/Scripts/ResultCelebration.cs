@@ -5,7 +5,6 @@ public class ResultCelebration : MonoBehaviour
 {
     private const int ConfettiCount = 70;
     private const int DotsPerBurst = 18;
-    private const int BulbCount = 14;
     private const float FireworkInterval = 0.9f;
     private const float BurstLife = 1.3f;
 
@@ -20,7 +19,6 @@ public class ResultCelebration : MonoBehaviour
     };
 
     private static readonly Color Gold = new Color(1f, 0.85f, 0.4f);
-    private static Sprite triangle;
 
     private class Dot
     {
@@ -38,8 +36,6 @@ public class ResultCelebration : MonoBehaviour
     private float[] confettiSpeed;
     private float[] confettiSpin;
     private float[] confettiPhase;
-    private Image[] bulbs;
-    private Color[] bulbColors;
     private readonly System.Collections.Generic.List<Dot> dots = new System.Collections.Generic.List<Dot>();
     private float nextFirework;
 
@@ -66,7 +62,6 @@ public class ResultCelebration : MonoBehaviour
 
         float dt = Time.unscaledDeltaTime;
         AnimateConfetti(dt);
-        AnimateBulbs();
         AnimateFireworks(dt);
     }
 
@@ -77,8 +72,6 @@ public class ResultCelebration : MonoBehaviour
         height = area.rect.height;
 
         content = NewRect("Content", transform, Vector2.zero, new Vector2(width, height));
-
-        BuildTree();
 
         Text phrase = AddText(content, "Phrase", "С НОВЫМ ГОДОМ!", 110, Gold, new Vector2(0f, height * 0.3f), new Vector2(width * 0.95f, 170f));
         phrase.gameObject.AddComponent<Outline>().effectColor = new Color(0.1f, 0.05f, 0.2f, 0.9f);
@@ -101,34 +94,6 @@ public class ResultCelebration : MonoBehaviour
         nextFirework = 0.2f;
     }
 
-    private void BuildTree()
-    {
-        float h = Mathf.Min(height * 0.42f, 760f);
-        float baseY = -height * 0.22f;
-
-        AddImage(content, "Trunk", null, new Color(0.45f, 0.25f, 0.1f), new Vector2(0f, baseY + h * 0.03f), new Vector2(h * 0.1f, h * 0.14f));
-
-        Sprite tri = Triangle();
-        AddImage(content, "TierBottom", tri, new Color(0.1f, 0.5f, 0.2f), new Vector2(0f, baseY + h * 0.1f + h * 0.18f), new Vector2(h * 0.56f, h * 0.36f));
-        AddImage(content, "TierMiddle", tri, new Color(0.1f, 0.5f, 0.2f), new Vector2(0f, baseY + h * 0.3f + h * 0.15f), new Vector2(h * 0.44f, h * 0.30f));
-        AddImage(content, "TierTop", tri, new Color(0.1f, 0.5f, 0.2f), new Vector2(0f, baseY + h * 0.48f + h * 0.13f), new Vector2(h * 0.32f, h * 0.26f));
-        AddImage(content, "Star", HudSprites.Disc, Gold, new Vector2(0f, baseY + h * 0.78f), new Vector2(h * 0.1f, h * 0.1f));
-
-        bulbs = new Image[BulbCount];
-        bulbColors = new Color[BulbCount];
-
-        for (int i = 0; i < BulbCount; i++)
-        {
-            float t = (i + 0.5f) / BulbCount;
-            float rel = 0.1f + t * 0.62f;
-            float halfWidth = h * Mathf.Max(0.05f, 0.28f * (1f - (rel - 0.1f) / 0.68f));
-            float x = Mathf.Sin(i * 2.4f) * halfWidth * 0.8f;
-            Vector2 position = new Vector2(x, baseY + h * rel);
-            bulbColors[i] = Palette[i % Palette.Length];
-            bulbs[i] = AddImage(content, "TreeBulb" + i, HudSprites.Disc, bulbColors[i], position, new Vector2(h * 0.045f, h * 0.045f));
-        }
-    }
-
     private void AnimateConfetti(float dt)
     {
         float top = height * 0.5f + 40f;
@@ -148,16 +113,6 @@ public class ResultCelebration : MonoBehaviour
 
             confetti[i].anchoredPosition = p;
             confetti[i].Rotate(0f, 0f, confettiSpin[i] * dt);
-        }
-    }
-
-    private void AnimateBulbs()
-    {
-        for (int i = 0; i < bulbs.Length; i++)
-        {
-            float pulse = 0.6f + 0.4f * Mathf.Sin(Time.unscaledTime * 6f + i);
-            Color c = bulbColors[i];
-            bulbs[i].color = new Color(c.r * pulse, c.g * pulse, c.b * pulse, 1f);
         }
     }
 
@@ -211,38 +166,6 @@ public class ResultCelebration : MonoBehaviour
                 Age = 0f
             });
         }
-    }
-
-    private static Sprite Triangle()
-    {
-        if (triangle != null)
-        {
-            return triangle;
-        }
-
-        const int size = 64;
-        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
-        {
-            wrapMode = TextureWrapMode.Clamp,
-            filterMode = FilterMode.Bilinear
-        };
-        Color[] pixels = new Color[size * size];
-
-        for (int y = 0; y < size; y++)
-        {
-            float half = (size - 1) * 0.5f * (1f - y / (float)(size - 1));
-
-            for (int x = 0; x < size; x++)
-            {
-                bool inside = Mathf.Abs(x - (size - 1) * 0.5f) <= half;
-                pixels[y * size + x] = inside ? Color.white : Color.clear;
-            }
-        }
-
-        texture.SetPixels(pixels);
-        texture.Apply();
-        triangle = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f);
-        return triangle;
     }
 
     private static RectTransform NewRect(string name, Transform parent, Vector2 position, Vector2 size)

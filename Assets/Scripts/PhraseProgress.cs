@@ -69,7 +69,7 @@ public class PhraseProgress : MonoBehaviour
 
         if (collected >= LetterCount)
         {
-            GameManager.Instance.Win("Фраза собрана: " + Phrase);
+            GameManager.Instance.MarkPhraseCollected();
         }
     }
 }
