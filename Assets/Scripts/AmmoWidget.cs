@@ -5,8 +5,6 @@ public class AmmoWidget : MonoBehaviour
 {
     public SnowballShooter shooter;
     public Image[] slots;
-    public Sprite emptySprite;
-    public Sprite filledSprite;
 
     private void Update()
     {
@@ -17,8 +15,7 @@ public class AmmoWidget : MonoBehaviour
 
         for (int i = 0; i < slots.Length; i++)
         {
-            bool filled = i < shooter.Ammo;
-            slots[i].sprite = filled ? filledSprite : emptySprite;
+            slots[i].sprite = i < shooter.Ammo ? HudSprites.Disc : HudSprites.Ring;
         }
     }
 }

@@ -30,11 +30,14 @@ public class SnowballShooter : MonoBehaviour
 
     private void Update()
     {
-        if (Mouse.current == null || !Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
-            return;
+            Throw();
         }
+    }
 
+    public void Throw()
+    {
         if (Time.time < nextShotTime || Ammo <= 0)
         {
             return;
