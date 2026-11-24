@@ -12,7 +12,6 @@ public static class SplatEffect
         ParticleSystem.MainModule main = ps.main;
         main.playOnAwake = false;
         main.loop = false;
-        main.duration = 0.2f;
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(1.5f, 3.5f);
         main.startSize = new ParticleSystem.MinMaxCurve(0.1f, 0.22f);

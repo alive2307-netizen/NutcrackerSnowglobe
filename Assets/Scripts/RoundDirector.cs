@@ -83,7 +83,6 @@ public class RoundDirector : MonoBehaviour
         ParticleSystem.MainModule main = confetti.main;
         main.playOnAwake = false;
         main.loop = false;
-        main.duration = 3f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
         main.startLifetime = 3f;
         main.startSpeed = new ParticleSystem.MinMaxCurve(4f, 9f);
