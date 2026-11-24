@@ -8,13 +8,18 @@ public enum GameState
     Running,
     Defeat,
     Win,
-    Lose
+    Lose,
+    Revive
 }
 
 public class GameManager : MonoBehaviour
 {
     private const float CountdownSeconds = 3f;
     private const float DefeatPauseSeconds = 3f;
+    private const float ReviveGraceSeconds = 2f;
+
+    public const int ReviveCost = 50;
+    public const int WinReward = 10;
 
     public static GameManager Instance { get; private set; }
 
@@ -29,10 +34,12 @@ public class GameManager : MonoBehaviour
     public int Score { get; private set; }
     public bool IsScoreMultiplied => Time.time < scoreMultiplierUntil;
     public int CountdownValue => Mathf.Max(1, Mathf.CeilToInt(stateEndsAt - Time.time));
+    public bool CanBeDefeated => State == GameState.Running && Time.time >= reviveGraceUntil;
 
     private float scoreMultiplier = 1f;
     private float scoreMultiplierUntil;
     private float stateEndsAt;
+    private float reviveGraceUntil;
     private bool defeatByTheft;
 
     private void Awake()
@@ -56,8 +63,7 @@ public class GameManager : MonoBehaviour
         }
         else if (State == GameState.Defeat && Time.time >= stateEndsAt)
         {
-            SetState(GameState.Lose);
-            Debug.Log("[Щелкунчик] Раунд окончен: Lose. " + ResultReason);
+            SetState(GameState.Revive);
         }
 
         AudioManager.SetGnawing(State == GameState.Defeat && defeatByTheft);
@@ -80,7 +86,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(string reason)
     {
-        if (State != GameState.Running)
+        if (!CanBeDefeated)
         {
             return;
         }
@@ -92,7 +98,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOverByTheft(string reason)
     {
-        if (State != GameState.Running)
+        if (!CanBeDefeated)
         {
             return;
         }
@@ -109,8 +115,50 @@ public class GameManager : MonoBehaviour
         }
 
         ResultReason = reason;
+        CoinWallet.Add(WinReward);
         SetState(GameState.Win);
         Debug.Log("[Щелкунчик] Раунд окончен: Win. " + reason);
+    }
+
+    public bool TryReviveWithCoins()
+    {
+        if (State != GameState.Revive || !CoinWallet.TrySpend(ReviveCost))
+        {
+            return false;
+        }
+
+        Revive();
+        return true;
+    }
+
+    public void Revive()
+    {
+        if (State != GameState.Revive)
+        {
+            return;
+        }
+
+        HealthManager health = player != null ? player.GetComponent<HealthManager>() : null;
+
+        if (defeatByTheft && health != null)
+        {
+            health.RestoreAfterTheft();
+        }
+
+        defeatByTheft = false;
+        reviveGraceUntil = Time.time + ReviveGraceSeconds;
+        SetState(GameState.Running);
+    }
+
+    public void GiveUp()
+    {
+        if (State != GameState.Revive)
+        {
+            return;
+        }
+
+        SetState(GameState.Lose);
+        Debug.Log("[Щелкунчик] Раунд окончен: Lose. " + ResultReason);
     }
 
     public void AddScore(int basePoints)

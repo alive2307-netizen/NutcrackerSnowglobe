@@ -13,6 +13,7 @@ public class HealthManager : MonoBehaviour
     public bool IsInvincible => Time.time < invincibleUntil;
 
     private float invincibleUntil;
+    private float healthBeforeTheft;
 
     private void Awake()
     {
@@ -36,7 +37,7 @@ public class HealthManager : MonoBehaviour
 
     public bool Steal(float amount)
     {
-        if (amount <= 0f || IsInvincible || !IsRunning())
+        if (amount <= 0f || IsInvincible || !IsRunning() || !CanBeDefeated)
         {
             return false;
         }
@@ -45,6 +46,7 @@ public class HealthManager : MonoBehaviour
 
         if (left < 0f)
         {
+            healthBeforeTheft = CurrentHealth;
             CurrentHealth = 0f;
 
             if (GameManager.Instance != null)
@@ -57,6 +59,11 @@ public class HealthManager : MonoBehaviour
 
         CurrentHealth = left;
         return true;
+    }
+
+    public void RestoreAfterTheft()
+    {
+        CurrentHealth = healthBeforeTheft;
     }
 
     public void CollectGarlandPart(float duration)
@@ -84,4 +91,6 @@ public class HealthManager : MonoBehaviour
     {
         return GameManager.Instance == null || GameManager.Instance.State == GameState.Running;
     }
+
+    private static bool CanBeDefeated => GameManager.Instance == null || GameManager.Instance.CanBeDefeated;
 }
