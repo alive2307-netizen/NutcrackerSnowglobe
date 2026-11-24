@@ -113,7 +113,7 @@ public class MouseEnemy : MonoBehaviour
         }
     }
 
-    private void Burst()
+    public void Burst()
     {
         AudioManager.Play(AudioManager.Sfx.Splat);
         SplatEffect.Spawn(transform.position);
@@ -144,16 +144,6 @@ public class MouseEnemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        SnowballProjectile projectile = other.GetComponent<SnowballProjectile>();
-
-        if (projectile != null)
-        {
-            Destroy(projectile.gameObject);
-            AudioManager.Play(AudioManager.Sfx.Splat);
-            Vanish();
-            return;
-        }
-
         PlayerMovement player = other.GetComponentInParent<PlayerMovement>();
 
         if (player == null)

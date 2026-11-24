@@ -4,15 +4,21 @@ using UnityEngine.UI;
 public class AmmoWidget : MonoBehaviour
 {
     public SnowballShooter shooter;
-    public Text label;
+    public Image[] slots;
+    public Sprite emptySprite;
+    public Sprite filledSprite;
 
     private void Update()
     {
-        if (shooter == null || label == null)
+        if (shooter == null || slots == null)
         {
             return;
         }
 
-        label.text = "Снежки: " + shooter.Ammo + " / " + shooter.maxAmmo;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            bool filled = i < shooter.Ammo;
+            slots[i].sprite = filled ? filledSprite : emptySprite;
+        }
     }
 }

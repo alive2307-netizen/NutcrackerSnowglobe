@@ -4,16 +4,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlanetGravity))]
 public class SnowballShooter : MonoBehaviour
 {
-    public GameObject snowballPrefab;
-
-    [Tooltip("Скорость снежка, м/с.")]
-    public float speed = 25f;
-
-    [Tooltip("Пауза между выстрелами, секунд.")]
+    [Tooltip("Пауза между бросками, секунд.")]
     public float cooldown = 0.4f;
 
     [Tooltip("Максимум снежков в запасе. В начале раунда запас пуст.")]
-    public int maxAmmo = 10;
+    public int maxAmmo = 5;
+
+    [Tooltip("Радиус поражения, градусов по поверхности планеты. Мыши дальше этого угла не задеваются.")]
+    public float hitAngle = 12f;
 
     public int Ammo { get; private set; }
 
@@ -37,7 +35,7 @@ public class SnowballShooter : MonoBehaviour
             return;
         }
 
-        if (Time.time < nextShotTime || snowballPrefab == null || Ammo <= 0)
+        if (Time.time < nextShotTime || Ammo <= 0)
         {
             return;
         }
@@ -49,13 +47,19 @@ public class SnowballShooter : MonoBehaviour
 
         nextShotTime = Time.time + cooldown;
         Ammo--;
-
-        Vector3 up = planetGravity.Up;
-        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, up).normalized;
-        Vector3 spawn = transform.position + forward * 1.2f;
-
         AudioManager.Play(AudioManager.Sfx.Shot);
-        GameObject snowball = Instantiate(snowballPrefab, spawn, Quaternion.LookRotation(forward, up));
-        snowball.GetComponent<SnowballProjectile>().Launch(planetGravity.planet, forward * speed);
+
+        Vector3 center = planetGravity.planet.position;
+        Vector3 playerDir = (transform.position - center).normalized;
+
+        foreach (MouseEnemy mouse in FindObjectsByType<MouseEnemy>(FindObjectsSortMode.None))
+        {
+            Vector3 mouseDir = (mouse.transform.position - center).normalized;
+
+            if (Vector3.Angle(playerDir, mouseDir) <= hitAngle)
+            {
+                mouse.Burst();
+            }
+        }
     }
 }
