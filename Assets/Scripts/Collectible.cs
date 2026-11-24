@@ -15,6 +15,11 @@ public abstract class Collectible : MonoBehaviour
 
         OnCollect(player);
         AudioManager.Play(PickupSound);
+        Consume();
+    }
+
+    protected virtual void Consume()
+    {
         Destroy(gameObject);
     }
 

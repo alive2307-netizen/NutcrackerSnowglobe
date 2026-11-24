@@ -5,7 +5,7 @@ using UnityEngine;
 public class MouseRespawner : MonoBehaviour
 {
     [Tooltip("Через сколько секунд исчезнувшая мышь появится снова.")]
-    public float respawnDelay = 8f;
+    public float respawnDelay = 90f;
 
     public static MouseRespawner Instance { get; private set; }
 
