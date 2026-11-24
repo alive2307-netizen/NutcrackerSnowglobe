@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     [Tooltip("Начальная скорость прыжка вдоль нормали, м/с.")]
-    public float jumpImpulse = 9f;
+    public float jumpImpulse = 12f;
 
     [Tooltip("Длина луча вниз от центра: половина высоты капсулы плюс запас.")]
     public float groundCheckDistance = 1.2f;
