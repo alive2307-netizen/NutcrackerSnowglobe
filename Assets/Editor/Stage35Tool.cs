@@ -8,7 +8,7 @@ public static class Stage35Tool
 {
     private const float SlotWidth = 90f;
     private const float WordGap = 50f;
-    private const int WordStartIndex = 6;
+    private const int WordStartIndex = 8;
 
     [MenuItem("Nutcracker/Apply Stage 35 (phrase letters, second win)")]
     public static void Apply()
@@ -29,7 +29,7 @@ public static class Stage35Tool
         }
 
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        int count = PhraseProgress.Letters.Length;
+        int count = PhraseProgress.Phrase.Length;
         float width = count * SlotWidth + WordGap;
 
         GameObject row = new GameObject("PhraseRow", typeof(RectTransform), typeof(PhraseProgress));
@@ -40,7 +40,7 @@ public static class Stage35Tool
         rect.anchorMax = new Vector2(0.5f, 1f);
         rect.pivot = new Vector2(0.5f, 1f);
         rect.sizeDelta = new Vector2(width, 120f);
-        rect.anchoredPosition = new Vector2(0f, -200f);
+        rect.anchoredPosition = new Vector2(0f, -30f);
 
         Text[] slots = new Text[count];
 

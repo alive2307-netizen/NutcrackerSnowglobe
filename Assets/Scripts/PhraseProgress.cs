@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public class PhraseProgress : MonoBehaviour
 {
-    public const string Letters = "СНОВЫМГОДОМ";
     public const string Phrase = "С НОВЫМ ГОДОМ";
 
     private static readonly Color[] Palette =
@@ -19,10 +18,29 @@ public class PhraseProgress : MonoBehaviour
     public Text[] slots;
 
     private bool[] found;
+    private int collected;
 
-    public static Color ColorOf(int index)
+    public static int LetterCount
     {
-        return Palette[index % Palette.Length];
+        get
+        {
+            int count = 0;
+
+            foreach (char c in Phrase)
+            {
+                if (c != ' ')
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+    }
+
+    public static Color ColorOf(int charIndex)
+    {
+        return Palette[charIndex % Palette.Length];
     }
 
     private void Awake()
@@ -31,30 +49,27 @@ public class PhraseProgress : MonoBehaviour
 
         for (int i = 0; i < slots.Length; i++)
         {
-            slots[i].text = "_";
+            bool space = Phrase[i] == ' ';
+            slots[i].text = space ? "" : "_";
             slots[i].color = new Color(1f, 1f, 1f, 0.35f);
         }
     }
 
-    public void Collect(int index)
+    public void Collect(int charIndex)
     {
-        if (found[index])
+        if (found[charIndex])
         {
             return;
         }
 
-        found[index] = true;
-        slots[index].text = Letters[index].ToString();
-        slots[index].color = ColorOf(index);
+        found[charIndex] = true;
+        collected++;
+        slots[charIndex].text = Phrase[charIndex].ToString();
+        slots[charIndex].color = ColorOf(charIndex);
 
-        foreach (bool f in found)
+        if (collected >= LetterCount)
         {
-            if (!f)
-            {
-                return;
-            }
+            GameManager.Instance.Win("Фраза собрана: " + Phrase);
         }
-
-        GameManager.Instance.Win("Фраза собрана: " + Phrase);
     }
 }

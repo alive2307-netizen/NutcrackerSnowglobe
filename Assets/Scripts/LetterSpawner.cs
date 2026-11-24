@@ -2,43 +2,68 @@ using UnityEngine;
 
 public class LetterSpawner : MonoBehaviour
 {
+    private const int MaxAttempts = 4000;
+
     public Transform planet;
     public PhraseProgress phrase;
     public float planetRadius = 30f;
     public float surfaceLift = 1.2f;
 
-    [Tooltip("Ось, вокруг которой стоят буквы. По умолчанию совпадает с орбитой мышей.")]
-    public Vector3 orbitAxis = Vector3.right;
-
-    public float startAngle = 30f;
-    public float spacingAngle = 12f;
+    [Tooltip("Минимальный угол между буквами по поверхности планеты, градусов.")]
+    public float minSeparation = 28f;
 
     private void Start()
     {
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        Vector3[] placed = new Vector3[PhraseProgress.LetterCount];
+        int count = 0;
 
-        Vector3 axis = orbitAxis.normalized;
-        Vector3 a = Vector3.Cross(axis, Vector3.up);
-
-        if (a.sqrMagnitude < 0.0001f)
+        for (int i = 0; i < PhraseProgress.Phrase.Length && count < placed.Length; i++)
         {
-            a = Vector3.Cross(axis, Vector3.forward);
+            if (PhraseProgress.Phrase[i] == ' ')
+            {
+                continue;
+            }
+
+            placed[count] = RandomFreeDirection(placed, count);
+            CreateLetter(i, planet.position + placed[count] * (planetRadius + surfaceLift), font);
+            count++;
+        }
+    }
+
+    private Vector3 RandomFreeDirection(Vector3[] placed, int count)
+    {
+        Vector3 best = Random.onUnitSphere;
+        float bestGap = -1f;
+
+        for (int attempt = 0; attempt < MaxAttempts; attempt++)
+        {
+            Vector3 dir = Random.onUnitSphere;
+            float gap = float.MaxValue;
+
+            for (int j = 0; j < count; j++)
+            {
+                gap = Mathf.Min(gap, Vector3.Angle(dir, placed[j]));
+            }
+
+            if (gap >= minSeparation)
+            {
+                return dir;
+            }
+
+            if (gap > bestGap)
+            {
+                bestGap = gap;
+                best = dir;
+            }
         }
 
-        a.Normalize();
-        Vector3 b = Vector3.Cross(axis, a);
-
-        for (int i = 0; i < PhraseProgress.Letters.Length; i++)
-        {
-            float rad = (startAngle + spacingAngle * i) * Mathf.Deg2Rad;
-            Vector3 dir = a * Mathf.Cos(rad) + b * Mathf.Sin(rad);
-            CreateLetter(i, planet.position + dir * (planetRadius + surfaceLift), font);
-        }
+        return best;
     }
 
     private void CreateLetter(int index, Vector3 position, Font font)
     {
-        GameObject root = new GameObject("Letter_" + PhraseProgress.Letters[index]);
+        GameObject root = new GameObject("Letter_" + PhraseProgress.Phrase[index]);
         root.transform.position = position;
 
         SphereCollider trigger = root.AddComponent<SphereCollider>();
@@ -55,7 +80,7 @@ public class LetterSpawner : MonoBehaviour
         GameObject labelObject = new GameObject("Label");
         labelObject.transform.SetParent(root.transform, false);
         TextMesh label = labelObject.AddComponent<TextMesh>();
-        label.text = PhraseProgress.Letters[index].ToString();
+        label.text = PhraseProgress.Phrase[index].ToString();
         label.font = font;
         label.fontSize = 96;
         label.characterSize = 0.14f;
