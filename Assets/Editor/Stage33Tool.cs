@@ -109,7 +109,7 @@ public static class Stage33Tool
         rect.anchorMax = new Vector2(1f, 1f);
         rect.pivot = new Vector2(1f, 1f);
         rect.sizeDelta = new Vector2(SlotSize, height);
-        rect.anchoredPosition = new Vector2(-40f, -130f);
+        rect.anchoredPosition = new Vector2(-40f, -330f);
 
         Image[] bulbs = new Image[GarlandBulbs];
 

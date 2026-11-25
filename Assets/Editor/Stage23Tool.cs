@@ -75,7 +75,7 @@ public static class Stage23Tool
         rect.anchorMin = new Vector2(0f, 1f);
         rect.anchorMax = new Vector2(0f, 1f);
         rect.pivot = new Vector2(0f, 1f);
-        rect.anchoredPosition = new Vector2(40f, -60f);
+        rect.anchoredPosition = new Vector2(40f, -330f);
         rect.sizeDelta = new Vector2(Width, Height);
 
         CreateChildImage(frame.transform, "Outline", silhouette, new Color(0.1f, 0.3f, 0.15f, 0.5f));

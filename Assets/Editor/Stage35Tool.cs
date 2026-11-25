@@ -40,7 +40,7 @@ public static class Stage35Tool
         rect.anchorMax = new Vector2(0.5f, 1f);
         rect.pivot = new Vector2(0.5f, 1f);
         rect.sizeDelta = new Vector2(width, 120f);
-        rect.anchoredPosition = new Vector2(0f, -30f);
+        rect.anchoredPosition = new Vector2(0f, -180f);
 
         Text[] slots = new Text[count];
 
