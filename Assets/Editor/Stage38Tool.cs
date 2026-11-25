@@ -111,25 +111,62 @@ public static class Stage38Tool
         AddImage(panel.transform, "ToyGreen", HudSprites.Disc, Palette[3], new Vector2(880f, -400f), new Vector2(34f, 34f));
         AddImage(panel.transform, "ToyPurple", HudSprites.Disc, Palette[4], new Vector2(760f, 150f), new Vector2(26f, 26f));
 
-        Text title = AddText(panel.transform, "Title", "ЩЕЛКУНЧИК И СНЕЖНЫЙ ШАР", 96, Gold, new Vector2(0f, 500f), new Vector2(1600f, 120f), font, TextAnchor.UpperCenter);
+        Text title = AddTopText(panel.transform, "Title", "ЩЕЛКУНЧИК И СНЕЖНЫЙ ШАР", 72, Gold, font, TextAnchor.UpperCenter, -60f);
         title.gameObject.AddComponent<Outline>().effectColor = new Color(0.1f, 0.05f, 0.2f, 0.9f);
 
-        AddText(panel.transform, "Story", Story, 34, Body, new Vector2(-440f, 330f), new Vector2(860f, 760f), font, TextAnchor.UpperLeft);
+        GameObject scroll = new GameObject("AboutScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+        scroll.transform.SetParent(panel.transform, false);
+        RectTransform scrollRect = (RectTransform)scroll.transform;
+        scrollRect.anchorMin = Vector2.zero;
+        scrollRect.anchorMax = Vector2.one;
+        scrollRect.offsetMin = new Vector2(60f, 200f);
+        scrollRect.offsetMax = new Vector2(-60f, -420f);
+        scroll.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);
 
-        AddText(panel.transform, "ControlsTitle", "УПРАВЛЕНИЕ", 44, Gold, new Vector2(480f, 330f), new Vector2(900f, 60f), font, TextAnchor.UpperLeft);
-        AddText(panel.transform, "Controls", Controls, 30, Body, new Vector2(480f, 260f), new Vector2(900f, 260f), font, TextAnchor.UpperLeft);
+        GameObject viewport = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+        viewport.transform.SetParent(scroll.transform, false);
+        Stretch((RectTransform)viewport.transform);
+        viewport.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0f);
 
-        AddText(panel.transform, "ItemsTitle", "ПРЕДМЕТЫ И ПРАВИЛА", 44, Gold, new Vector2(480f, -10f), new Vector2(900f, 60f), font, TextAnchor.UpperLeft);
-        AddText(panel.transform, "Items", Items, 28, Body, new Vector2(480f, -70f), new Vector2(900f, 420f), font, TextAnchor.UpperLeft);
+        GameObject content = new GameObject("Content", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter));
+        content.transform.SetParent(viewport.transform, false);
+        RectTransform contentRect = (RectTransform)content.transform;
+        contentRect.anchorMin = new Vector2(0f, 1f);
+        contentRect.anchorMax = new Vector2(1f, 1f);
+        contentRect.pivot = new Vector2(0.5f, 1f);
+        contentRect.anchoredPosition = Vector2.zero;
+        contentRect.sizeDelta = Vector2.zero;
+
+        VerticalLayoutGroup layout = content.GetComponent<VerticalLayoutGroup>();
+        layout.spacing = 24f;
+        layout.padding = new RectOffset(20, 20, 20, 20);
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+        content.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        AddSection(content.transform, "Story", Story, 34, Body, font, TextAnchor.UpperLeft);
+        AddSection(content.transform, "ControlsTitle", "УПРАВЛЕНИЕ", 44, Gold, font, TextAnchor.UpperLeft);
+        AddSection(content.transform, "Controls", Controls, 30, Body, font, TextAnchor.UpperLeft);
+        AddSection(content.transform, "ItemsTitle", "ПРЕДМЕТЫ И ПРАВИЛА", 44, Gold, font, TextAnchor.UpperLeft);
+        AddSection(content.transform, "Items", Items, 28, Body, font, TextAnchor.UpperLeft);
+
+        ScrollRect scrollView = scroll.GetComponent<ScrollRect>();
+        scrollView.viewport = (RectTransform)viewport.transform;
+        scrollView.content = contentRect;
+        scrollView.horizontal = false;
+        scrollView.movementType = ScrollRect.MovementType.Clamped;
 
         Button backButton = CloneButton(ui.backButton, panel.transform, "AboutBackButton", "НАЗАД");
         RectTransform backRect = (RectTransform)backButton.transform;
-        backRect.anchorMin = new Vector2(0.5f, 0.5f);
-        backRect.anchorMax = new Vector2(0.5f, 0.5f);
-        backRect.pivot = new Vector2(0.5f, 0.5f);
-        backRect.anchoredPosition = new Vector2(0f, -490f);
+        backRect.anchorMin = new Vector2(0.5f, 0f);
+        backRect.anchorMax = new Vector2(0.5f, 0f);
+        backRect.pivot = new Vector2(0.5f, 0f);
+        backRect.anchoredPosition = new Vector2(0f, 80f);
         backRect.sizeDelta = new Vector2(340f, 80f);
 
+        root.transform.SetAsLastSibling();
         AboutScreen about = root.AddComponent<AboutScreen>();
         about.panel = panel;
         about.openButton = aboutButton;
@@ -171,18 +208,34 @@ public static class Stage38Tool
         image.raycastTarget = false;
     }
 
-    private static Text AddText(Transform parent, string name, string value, int size, Color color, Vector2 position, Vector2 box, Font font, TextAnchor alignment)
+    private static Text AddTopText(Transform parent, string name, string value, int size, Color color, Font font, TextAnchor alignment, float topOffset)
     {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Text));
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Text), typeof(ContentSizeFitter));
         go.transform.SetParent(parent, false);
 
         RectTransform rect = (RectTransform)go.transform;
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchorMin = new Vector2(0.5f, 1f);
+        rect.anchorMax = new Vector2(0.5f, 1f);
         rect.pivot = new Vector2(0.5f, 1f);
-        rect.anchoredPosition = position;
-        rect.sizeDelta = box;
+        rect.anchoredPosition = new Vector2(0f, topOffset);
+        rect.sizeDelta = new Vector2(960f, 0f);
 
+        Text text = ConfigureText(go, value, size, color, font, alignment);
+        go.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        return text;
+    }
+
+    private static void AddSection(Transform parent, string name, string value, int size, Color color, Font font, TextAnchor alignment)
+    {
+        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Text), typeof(ContentSizeFitter));
+        go.transform.SetParent(parent, false);
+
+        ConfigureText(go, value, size, color, font, alignment);
+        go.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+    }
+
+    private static Text ConfigureText(GameObject go, string value, int size, Color color, Font font, TextAnchor alignment)
+    {
         Text text = go.GetComponent<Text>();
         text.font = font;
         text.fontSize = size;
@@ -191,6 +244,8 @@ public static class Stage38Tool
         text.text = value;
         text.supportRichText = true;
         text.raycastTarget = false;
+        text.horizontalOverflow = HorizontalWrapMode.Wrap;
+        text.verticalOverflow = VerticalWrapMode.Overflow;
         return text;
     }
 
